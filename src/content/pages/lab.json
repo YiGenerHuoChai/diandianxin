@@ -22,7 +22,7 @@
           "sub": "Stroop Task",
           "desc": "屏幕上的字是什么颜色？当字的含义和颜色不一致时，别按错。",
           "meta": "抑制控制 · 1 分钟",
-          "status": "筹备中"
+          "href": "/lab/stroop"
         },
         {
           "no": "02",

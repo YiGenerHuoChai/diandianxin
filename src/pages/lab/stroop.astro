@@ -1,0 +1,296 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Stroop 色词 · 点心"
+  description="点心 · 可交互实验：Stroop 色词，1 分钟测测你的抑制控制。"
+>
+  <div class="shell shell-wide">
+    <header class="intro">
+      <p class="brand">点心 <span class="brand-en">diandianxin.cn</span></p>
+      <h1 class="name">Stroop 色词</h1>
+      <p class="tagline">字说的和颜色说的，你听谁的？</p>
+      <footer class="intro-foot"><a href="/lab/">← 回实验目录</a></footer>
+    </header>
+
+    <main class="content stroop">
+      <section id="stage-start" class="stroop-panel">
+        <p class="lead">屏幕中间会出现一个表示颜色的字，但字可能是用另一种颜色写的。</p>
+        <p class="copy">你要做的：忽略字的意思，只报告「字是什么颜色」。</p>
+        <p class="copy">一共 20 题，大概 1 分钟。</p>
+        <button class="stroop-btn stroop-start" data-start>开始</button>
+      </section>
+
+      <section id="stage-run" class="stroop-panel" hidden>
+        <p class="stroop-progress"><span data-progress>1</span> / 20</p>
+        <div id="stroop-word" class="stroop-word">红</div>
+        <div class="stroop-options">
+          <button class="stroop-btn" data-color="red">红</button>
+          <button class="stroop-btn" data-color="green">绿</button>
+          <button class="stroop-btn" data-color="blue">蓝</button>
+          <button class="stroop-btn" data-color="yellow">黄</button>
+        </div>
+        <p class="stroop-hint">也可以按键盘 1 / 2 / 3 / 4</p>
+      </section>
+
+      <section id="stage-done" class="stroop-panel" hidden>
+        <p class="lead">这一轮结束了。</p>
+        <div class="stroop-result">
+          <p class="stroop-row">字和颜色一致：<strong data-rt-c>—</strong> 毫秒</p>
+          <p class="stroop-row">字和颜色不一致：<strong data-rt-i>—</strong> 毫秒</p>
+        </div>
+        <p class="copy stroop-diff" data-diff></p>
+        <p class="copy" data-explain></p>
+        <p class="copy stroop-acc" data-acc></p>
+        <button class="stroop-btn stroop-start" data-restart>再来一次</button>
+      </section>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .stroop {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-block-size: 72svh;
+    padding-block-end: 0;
+  }
+
+  .stroop-panel {
+    max-inline-size: 40rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .stroop-progress {
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .stroop-word {
+    margin-block: 2.5rem 3rem;
+    font-size: clamp(4rem, 9vw, 6.5rem);
+    line-height: 1.1;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    min-block-size: 1.1em;
+  }
+
+  .stroop-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    max-inline-size: 26rem;
+    margin-inline: auto;
+  }
+
+  .stroop-btn {
+    padding: 1rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    font: inherit;
+    font-size: 1.125rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease-out);
+  }
+
+  .stroop-btn:hover,
+  .stroop-btn:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .stroop-btn[data-color='red'] {
+    border-color: #b5482a;
+    color: #b5482a;
+  }
+
+  .stroop-btn[data-color='green'] {
+    border-color: #4a7c59;
+    color: #4a7c59;
+  }
+
+  .stroop-btn[data-color='blue'] {
+    border-color: #2f5f8f;
+    color: #2f5f8f;
+  }
+
+  .stroop-btn[data-color='yellow'] {
+    border-color: #b5892a;
+    color: #b5892a;
+  }
+
+  .stroop-start {
+    margin-block-start: 2rem;
+    padding-inline: 3rem;
+    border-color: var(--ink);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+
+  .stroop-hint {
+    margin-block-start: 1.5rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .stroop-result {
+    margin-block: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    font-size: 1.0625rem;
+  }
+
+  .stroop-row strong {
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stroop-diff {
+    font-size: 1.125rem;
+  }
+
+  .stroop-acc {
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+
+  @media (max-width: 640px) {
+    .stroop-options {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const COLORS = [
+    { key: 'red', label: '红', hex: '#b5482a' },
+    { key: 'green', label: '绿', hex: '#4a7c59' },
+    { key: 'blue', label: '蓝', hex: '#2f5f8f' },
+    { key: 'yellow', label: '黄', hex: '#b5892a' },
+  ];
+  const LABEL = Object.fromEntries(COLORS.map((c) => [c.key, c.label]));
+  const HEX = Object.fromEntries(COLORS.map((c) => [c.key, c.hex]));
+
+  const $ = (sel) => document.querySelector(sel);
+  const wordEl = $('#stroop-word');
+  const progressEl = document.querySelector('[data-progress]');
+
+  let trials = [];
+  let idx = 0;
+  let shownAt = 0;
+  let data = { congruent: [], incongruent: [] };
+  let running = false;
+
+  function shuffle(list) {
+    for (let i = list.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [list[i], list[j]] = [list[j], list[i]];
+    }
+    return list;
+  }
+
+  function build() {
+    const list = [];
+    for (let i = 0; i < 10; i++) {
+      const c = COLORS[i % COLORS.length];
+      list.push({ word: c.key, color: c.key, cond: 'congruent' });
+    }
+    for (let i = 0; i < 10; i++) {
+      const color = COLORS[i % COLORS.length];
+      let j = (i + 1) % COLORS.length;
+      if (COLORS[j].key === color.key) j = (j + 1) % COLORS.length;
+      list.push({ word: COLORS[j].key, color: color.key, cond: 'incongruent' });
+    }
+    return shuffle(list);
+  }
+
+  function next() {
+    if (idx >= trials.length) return finish();
+    const t = trials[idx];
+    progressEl.textContent = String(idx + 1);
+    wordEl.textContent = LABEL[t.word];
+    wordEl.style.color = HEX[t.color];
+    shownAt = performance.now();
+    running = true;
+  }
+
+  function start() {
+    trials = build();
+    idx = 0;
+    data = { congruent: [], incongruent: [] };
+    $('#stage-start').hidden = true;
+    $('#stage-done').hidden = true;
+    $('#stage-run').hidden = false;
+    next();
+  }
+
+  function answer(key) {
+    if (!running || idx >= trials.length) return;
+    running = false;
+    const rt = performance.now() - shownAt;
+    const t = trials[idx];
+    data[t.cond].push({ rt, correct: key === t.color });
+    idx += 1;
+    wordEl.textContent = '';
+    setTimeout(next, 200);
+  }
+
+  function avg(list) {
+    const ok = list.filter((x) => x.correct);
+    if (!ok.length) return null;
+    return ok.reduce((sum, x) => sum + x.rt, 0) / ok.length;
+  }
+
+  function finish() {
+    running = false;
+    $('#stage-run').hidden = true;
+    $('#stage-done').hidden = false;
+
+    const c = avg(data.congruent);
+    const i = avg(data.incongruent);
+    $('[data-rt-c]').textContent = c ? String(Math.round(c)) : '—';
+    $('[data-rt-i]').textContent = i ? String(Math.round(i)) : '—';
+
+    const all = [...data.congruent, ...data.incongruent];
+    const okCount = all.filter((x) => x.correct).length;
+    $('[data-acc]').textContent = `正确率：${okCount} / ${all.length}`;
+
+    if (c && i) {
+      const diff = Math.round(i - c);
+      $('[data-diff]').textContent =
+        diff >= 0
+          ? `不一致时你慢了 ${diff} 毫秒。`
+          : `有意思：不一致时你反而快了 ${Math.abs(diff)} 毫秒——可能手气好，也可能这一轮还太短。`;
+      $('[data-explain]').textContent =
+        '这就是 Stroop 效应：字的含义会抢先被读出来，你得先压住它、再去认颜色。多花的这点时间，就是「抑制控制」在起作用。';
+    } else {
+      $('[data-diff]').textContent = '数据太少，算不出差值。';
+      $('[data-explain]').textContent = '';
+    }
+  }
+
+  document.querySelector('[data-start]').addEventListener('click', start);
+  document.querySelector('[data-restart]').addEventListener('click', () => {
+    $('#stage-done').hidden = true;
+    $('#stage-start').hidden = false;
+  });
+
+  document.querySelectorAll('[data-color]').forEach((btn) => {
+    btn.addEventListener('click', () => answer(btn.dataset.color));
+  });
+
+  document.addEventListener('keydown', (event) => {
+    const map = { '1': 'red', '2': 'green', '3': 'blue', '4': 'yellow' };
+    const key = map[event.key];
+    if (key && !$('#stage-run').hidden) {
+      event.preventDefault();
+      answer(key);
+    }
+  });
+</script>
