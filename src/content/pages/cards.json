@@ -4,6 +4,7 @@
   "tagline": "一张卡，一个心理学小知识。",
   "description": "点心 · 心理识卡：一张卡带你了解心理学小知识。",
   "back": true,
+  "wide": true,
   "blocks": [
     {
       "type": "text",

@@ -82,6 +82,8 @@
   }
 
   .field { margin-bottom: 12px; }
+  .field-check label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8125rem; cursor: pointer; }
+  .field-check input[type="checkbox"] { inline-size: 1rem; block-size: 1rem; accent-color: #b5482a; }
   .field label { display: block; font-size: 12px; color: #6b6558; margin-bottom: 4px; }
   .field input, .field textarea, .field select {
     width: 100%;
@@ -213,6 +215,7 @@
       <div class="group-title">页面</div>
       <div class="field"><label>页面标题</label><input id="pageTitle"></div>
       <div class="field"><label>一句话简介</label><input id="pageTagline"></div>
+      <div class="field field-check"><label><input type="checkbox" id="pageWide"> 宽版布局（内容区加宽，适合卡片墙）</label></div>
     </section>
 
     <section class="group">
@@ -306,6 +309,7 @@
 
     $('pageTitle').value = page.title ?? '';
     $('pageTagline').value = page.tagline ?? '';
+    $('pageWide').checked = page.wide === true;
 
     renderBlocks(page);
   }
@@ -590,6 +594,11 @@
   $('pageTagline').addEventListener('input', (event) => {
     const page = currentPage();
     if (page) page.tagline = event.target.value;
+    dirty = true;
+  });
+  $('pageWide').addEventListener('change', (event) => {
+    const page = currentPage();
+    if (page) page.wide = event.target.checked || undefined;
     dirty = true;
   });
 

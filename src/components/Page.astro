@@ -11,6 +11,7 @@ interface Props {
     tagline?: string;
     description?: string;
     back?: boolean;
+    wide?: boolean;
     blocks: Array<Record<string, any>>;
   };
 }
@@ -27,7 +28,7 @@ const navItems = (page.blocks || [])
 ---
 
 <Layout title={pageTitle} description={description}>
-  <div class="shell">
+  <div class={page.wide ? 'shell shell-wide' : 'shell'}>
     <header class="intro">
       <p class="brand">{site.brand} <span class="brand-en">{site.brandEn}</span></p>
 

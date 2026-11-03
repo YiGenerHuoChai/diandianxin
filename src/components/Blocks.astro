@@ -12,7 +12,14 @@ const { blocks } = Astro.props;
     if (block.type === 'text') {
       return (
         <section id={`block-${i}`} class="section" data-nav={block.nav}>
-          {block.items.map((p, j) => (j === 0 && block.lead ? <p class="lead">{p}</p> : <p class="copy">{p}</p>))}
+          {block.items.flatMap((p, j) =>
+            String(p)
+              .split(/\r?\n/)
+              .filter((line) => line.trim() !== '')
+              .map((line, k) =>
+                j === 0 && block.lead && k === 0 ? <p class="lead">{line}</p> : <p class="copy">{line}</p>,
+              ),
+          )}
         </section>
       );
     }
