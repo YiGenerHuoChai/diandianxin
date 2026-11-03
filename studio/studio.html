@@ -116,6 +116,7 @@
                 <div>
                   ${field('标题', `grow${i}title`, item.title)}
                   ${field('描述', `grow${i}desc`, item.desc)}
+                  ${field('链接（可选，如 /lab）', `grow${i}href`, item.href)}
                   ${field('状态', `grow${i}status`, item.status)}
                 </div>
               </div>`
@@ -192,12 +193,15 @@
       for (let i = 0; i < 12; i++) {
         const title = $(`#grow${i}title`);
         if (!title) break;
-        grow.push({
+        const href = $(`#grow${i}href`).value.trim();
+        const item = {
           no: $(`#grow${i}no`).value.trim(),
           title: title.value.trim(),
           desc: $(`#grow${i}desc`).value.trim(),
           status: $(`#grow${i}status`).value.trim(),
-        });
+        };
+        if (href) item.href = href;
+        grow.push(item);
       }
 
       return {

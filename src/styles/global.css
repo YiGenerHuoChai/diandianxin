@@ -246,6 +246,37 @@
     letter-spacing: -0.01em;
   }
 
+  .item-en {
+    margin-inline-start: 0.4em;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+
+  .item-link {
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .item-link .item-title {
+    display: inline-block;
+    border-block-end: 1px solid transparent;
+    transition: border-color 0.2s var(--ease-out);
+  }
+
+  .item-link:hover .item-title,
+  .item-link:focus-visible .item-title {
+    border-block-end-color: var(--accent);
+  }
+
+  .item-meta {
+    margin-block-start: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
   .item-desc {
     margin-block-start: 0.5rem;
     font-size: 0.9375rem;
