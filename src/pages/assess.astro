@@ -1,0 +1,255 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="做个小测评 · 点心"
+  description="点心 · 做个小测评：5 句话，看看你对现在的生活有多满意。"
+>
+  <div class="assess-page">
+    <header class="assess-top">
+      <p class="brand">点心 <span class="brand-en">diandianxin.cn</span></p>
+    </header>
+
+    <main class="assess-main">
+      <div class="assess-inner">
+        <h1 class="assess-title">做个小测评</h1>
+
+        <section id="stage-start" class="assess-panel">
+          <p class="lead">下面有 5 句话。请根据你自己通常的感受，选出你对每一句的同意程度。</p>
+          <p class="copy assess-meta">1 = 非常不同意，7 = 非常同意。大概 1 分钟。</p>
+          <p class="copy assess-meta">这不是诊断，只是一个自我了解的入口。</p>
+          <button class="assess-btn assess-start" data-start>开始</button>
+        </section>
+
+        <section id="stage-run" class="assess-panel" hidden>
+          <p class="assess-progress" data-progress>1 / 5</p>
+          <p class="assess-question" data-question></p>
+          <div class="assess-options">
+            <button class="assess-btn" data-score="1">1</button>
+            <button class="assess-btn" data-score="2">2</button>
+            <button class="assess-btn" data-score="3">3</button>
+            <button class="assess-btn" data-score="4">4</button>
+            <button class="assess-btn" data-score="5">5</button>
+            <button class="assess-btn" data-score="6">6</button>
+            <button class="assess-btn" data-score="7">7</button>
+          </div>
+          <div class="assess-scale">
+            <span>非常不同意</span>
+            <span>非常同意</span>
+          </div>
+        </section>
+
+        <section id="stage-done" class="assess-panel" hidden>
+          <p class="assess-progress">你的分数</p>
+          <p class="assess-total" data-total>—</p>
+          <p class="assess-band" data-band></p>
+          <p class="copy" data-detail></p>
+          <p class="copy assess-cite">Diener, E., Emmons, R. A., Larsen, R. J., &amp; Griffin, S. (1985). The Satisfaction With Life Scale. <em>Journal of Personality Assessment, 49</em>(1), 71–75.</p>
+          <p class="copy assess-disclaimer">
+            这是一个自我了解的小工具，不是诊断，也不是咨询。如果你最近状态不好，找信任的人聊聊，或者寻求专业帮助。
+          </p>
+          <button class="assess-btn assess-start" data-restart>再来一次</button>
+        </section>
+      </div>
+    </main>
+
+    <footer class="assess-bottom">
+      <a href="/">← 回首页</a>
+    </footer>
+  </div>
+</Layout>
+
+<style>
+  .assess-page {
+    min-block-size: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-block: 2.5rem;
+    padding-inline: var(--gutter);
+  }
+
+  .assess-main {
+    display: flex;
+    min-block-size: 0;
+  }
+
+  .assess-inner {
+    margin: auto;
+    inline-size: 100%;
+    max-inline-size: 42rem;
+    text-align: center;
+  }
+
+  .assess-title {
+    margin-block-end: 3rem;
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .assess-panel {
+    text-align: center;
+  }
+
+  .assess-meta {
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .assess-progress {
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .assess-question {
+    margin-block: 2.5rem 3rem;
+    font-size: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .assess-options {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.5rem;
+    max-inline-size: 30rem;
+    margin-inline: auto;
+  }
+
+  .assess-btn {
+    padding: 0.9rem 0.5rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    font: inherit;
+    font-size: 1.0625rem;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease-out);
+  }
+
+  .assess-btn:hover,
+  .assess-btn:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .assess-scale {
+    display: flex;
+    justify-content: space-between;
+    max-inline-size: 30rem;
+    margin: 0.75rem auto 0;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .assess-start {
+    margin-block-start: 2rem;
+    padding-inline: 3rem;
+    border-color: var(--ink);
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+  }
+
+  .assess-total {
+    margin-block: 1rem 0.5rem;
+    font-size: 4rem;
+    line-height: 1;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .assess-band {
+    margin-block-end: 2rem;
+    font-size: 1.25rem;
+  }
+
+  .assess-cite {
+    margin-block-start: 2.5rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .assess-disclaimer {
+    margin-block-start: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 560px) {
+    .assess-options {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+</style>
+
+<script>
+  const QUESTIONS = [
+    '我的生活与我理想中的生活大多相符。',
+    '我的生活条件很好。',
+    '我对我的生活感到满意。',
+    '到目前为止，我已经得到了生活中我想要的重要东西。',
+    '如果我能重新活一次，我几乎不会改变任何事情。',
+  ];
+
+  const BANDS = [
+    { min: 31, label: '非常满意', detail: '你对现在的生活评价很高。' },
+    { min: 26, label: '满意', detail: '大部分时候，你对生活是满意的。' },
+    { min: 21, label: '略微偏向满意', detail: '整体还可以，也有一些想改的地方。' },
+    { min: 20, label: '大致中立', detail: '谈不上多满意，也谈不上多不满意。' },
+    { min: 15, label: '略微偏向不满意', detail: '有一些让你不太舒服的地方。' },
+    { min: 10, label: '不满意', detail: '眼下这段日子不太轻松。' },
+    { min: 5, label: '非常不满意', detail: '现在的生活和你想的差得很远。' },
+  ];
+
+  const $ = (sel) => document.querySelector(sel);
+  const questionEl = $('[data-question]');
+  const progressEl = $('[data-progress]');
+
+  let qi = 0;
+  let answers = [];
+
+  function showQuestion() {
+    progressEl.textContent = `${qi + 1} / ${QUESTIONS.length}`;
+    questionEl.textContent = QUESTIONS[qi];
+  }
+
+  function answer(score) {
+    if (qi >= QUESTIONS.length) return;
+    answers.push(score);
+    qi += 1;
+    if (qi >= QUESTIONS.length) return finish();
+    showQuestion();
+  }
+
+  function finish() {
+    const total = answers.reduce((sum, n) => sum + n, 0);
+    const band = BANDS.find((item) => total >= item.min) || BANDS[BANDS.length - 1];
+
+    $('#stage-run').hidden = true;
+    $('#stage-done').hidden = false;
+    $('[data-total]').textContent = `${total} / 35`;
+    $('[data-band]').textContent = band.label;
+    $('[data-detail]').textContent = band.detail;
+  }
+
+  function start() {
+    qi = 0;
+    answers = [];
+    $('#stage-start').hidden = true;
+    $('#stage-done').hidden = true;
+    $('#stage-run').hidden = false;
+    showQuestion();
+  }
+
+  $('[data-start]').addEventListener('click', start);
+  $('[data-restart]').addEventListener('click', () => {
+    $('#stage-done').hidden = true;
+    $('#stage-start').hidden = false;
+  });
+
+  document.querySelectorAll('[data-score]').forEach((btn) => {
+    btn.addEventListener('click', () => answer(Number(btn.dataset.score)));
+  });
+</script>
