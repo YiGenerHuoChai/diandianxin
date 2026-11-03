@@ -287,16 +287,19 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   function startTest() {
-    phase = 'test';
+    phase = 'transition';
     queue = buildTest();
     qi = 0;
     hintEl.hidden = true;
     wordEl.textContent = '';
-    feedbackEl.textContent = '练习结束，正式实验开始（20 题，不再提示对错）。';
-    setTimeout(() => {
-      feedbackEl.textContent = '';
-      next();
-    }, 1400);
+    feedbackEl.textContent = '练习结束。按任意键开始正式实验（20 题，不再提示对错）。';
+  }
+
+  function beginTest() {
+    if (phase !== 'transition') return;
+    phase = 'test';
+    feedbackEl.textContent = '';
+    next();
   }
 
   function answer(key) {
@@ -368,11 +371,20 @@ import Layout from '../../layouts/Layout.astro';
   });
 
   document.addEventListener('keydown', (event) => {
+    if (phase === 'transition') {
+      event.preventDefault();
+      beginTest();
+      return;
+    }
     const map = { '1': 'red', '2': 'green', '3': 'blue', '4': 'yellow' };
     const key = map[event.key];
-    if (key && !$('#stage-run').hidden) {
+    if (key && !$('#stage-run').hidden && (phase === 'practice' || phase === 'test')) {
       event.preventDefault();
       answer(key);
     }
+  });
+
+  $('#stage-run').addEventListener('click', () => {
+    if (phase === 'transition') beginTest();
   });
 </script>
