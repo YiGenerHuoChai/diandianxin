@@ -1,0 +1,38 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import site from '../../content/site.json';
+import notesData from '../../content/notes.json';
+
+const notes = notesData.notes || [];
+
+export function getStaticPaths() {
+  return (notesData.notes || []).map((note) => ({ params: { slug: note.slug } }));
+}
+
+const { slug } = Astro.params;
+const note = notes.find((item) => item.slug === slug);
+const paragraphs = String(note?.body || '')
+  .split(/\n\s*\n/)
+  .filter(Boolean);
+---
+
+<Layout title={`${note?.title} · ${site.brand || '点心'}`} description={note?.excerpt || ''}>
+  <div class="shell">
+    <header class="intro">
+      <p class="brand">{site.brand} <span class="brand-en">{site.brandEn}</span></p>
+      <h1 class="name">随便写写</h1>
+      <p class="tagline">心理学视角看日常，写值得一写的那些事儿。</p>
+      <footer class="intro-foot"><a href="/notes/">← 回列表</a></footer>
+    </header>
+
+    <main class="content">
+      <article class="note">
+        <h2 class="note-heading">{note?.title}</h2>
+        <p class="note-meta">
+          <time datetime={note?.date.replaceAll('.', '-')}>{note?.date}</time>
+        </p>
+        {paragraphs.map((paragraph) => <p class="copy">{paragraph}</p>)}
+      </article>
+    </main>
+  </div>
+</Layout>

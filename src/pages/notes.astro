@@ -1,0 +1,46 @@
+---
+import Layout from '../layouts/Layout.astro';
+import site from '../content/site.json';
+import notesData from '../content/notes.json';
+
+const notes = notesData.notes || [];
+---
+
+<Layout
+  title={`随便写写 · ${site.brand || '点心'}`}
+  description="点心 · 随便写写：心理学视角看日常，写值得一写的那些事儿。"
+>
+  <div class="shell">
+    <header class="intro">
+      <p class="brand">{site.brand} <span class="brand-en">{site.brandEn}</span></p>
+      <h1 class="name">随便写写</h1>
+      <p class="tagline">心理学视角看日常，写值得一写的那些事儿。</p>
+
+      <aside class="submit-note">
+        <p class="submit-note-title">等你投稿</p>
+        <p>如果你有一段真实的日常、一个案例，或者一件想不明白的事——都可以写给我。</p>
+        <p>我会试着从心理学的角度，陪你想一想。</p>
+        <a class="contact-link" href="mailto:hi@diandianxin.cn">hi@diandianxin.cn</a>
+      </aside>
+
+      <footer class="intro-foot"><a href="/">← 回首页</a></footer>
+    </header>
+
+    <main class="content">
+      <ul class="note-list">
+        {
+          notes.map((note) => (
+            <li class="note-item">
+              <a class="note-link" href={`/notes/${note.slug}`}>
+                <time class="note-date" datetime={note.date.replaceAll('.', '-')}>{note.date}</time>
+                <span class="note-title">{note.title}</span>
+                <span class="note-excerpt">{note.excerpt}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="note-next">第二篇在写。</p>
+    </main>
+  </div>
+</Layout>

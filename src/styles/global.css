@@ -457,6 +457,91 @@
     }
   }
 
+  .submit-note {
+    margin-block-start: 2.5rem;
+    padding-inline-start: 1.25rem;
+    border-inline-start: 2px solid var(--accent);
+  }
+
+  .submit-note-title {
+    margin-block-end: 0.75rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+  }
+
+  .submit-note p {
+    margin-block-end: 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  .submit-note .contact-link {
+    font-size: 0.9375rem;
+  }
+
+  .note-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .note-item + .note-item {
+    margin-block-start: 2.5rem;
+  }
+
+  .note-link {
+    display: block;
+    text-decoration: none;
+  }
+
+  .note-link:hover .note-title {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 0.25rem;
+  }
+
+  .note-date {
+    display: block;
+    margin-block-end: 0.375rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .note-title {
+    display: block;
+    margin-block-end: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .note-excerpt {
+    display: block;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .note-next {
+    margin-block-start: 3rem;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .note-heading {
+    margin-block-end: 0.75rem;
+    font-size: 1.5rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .note-meta {
+    margin-block-end: 2.5rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
   @media (max-width: 1100px) {
     .chapter-link {
       position: static;
