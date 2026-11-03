@@ -1,0 +1,297 @@
+/* 点心 · 设计系统
+ * 纪律：纸墨二元、强调色面积 < 1%、零渐变零投影零圆角、
+ * 字体 ≤ 2 款、hover 只改粗细不改颜色、动效必须有理由。
+ * 参考：color.pizza 的 token 系统与刊物感排版。
+ */
+
+@layer reset, tokens, base, layout, content;
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body,
+  h1,
+  h2,
+  h3,
+  p,
+  ul,
+  ol,
+  figure,
+  blockquote {
+    margin: 0;
+  }
+  ul,
+  ol {
+    padding: 0;
+    list-style: none;
+  }
+  a {
+    color: inherit;
+  }
+  img,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer tokens {
+  :root {
+    /* 纸墨二元：暖白纸 + 暖黑墨，没有第三种中性色做大面积 */
+    --paper: #faf8f4;
+    --ink: #2b2823;
+    --muted: #6b6459;
+    --rule: #e5dfd4;
+    --accent: #b5482a; /* 强调色：赭石橙，面积 < 1%，只用于下划线/选中/滚动条 */
+
+    /* 一款衬线，用到极致；中文优先思源宋体/宋体 */
+    --font-text: "Noto Serif SC", "Source Han Serif SC", "Songti SC",
+      "SimSun", Georgia, "Times New Roman", serif;
+
+    /* 排版：行高用具体值，不用倍数 */
+    --text: 1.0625rem; /* 17px */
+    --leading: 1.75rem; /* 28px */
+    --measure: 34rem; /* 544px，中文约 32 字/行 */
+
+    /* 间距：一个序列，不随意加数字 */
+    --gap: 3.4375rem; /* 55px */
+    --gutter: 2.75rem; /* 44px */
+    --shell-top: 2.375rem; /* 38px */
+
+    /* 动效曲线：一条够用 */
+    --ease-out: cubic-bezier(0.3, 0.7, 0, 1);
+  }
+}
+
+@layer base {
+  html {
+    background: var(--paper);
+    color: var(--ink);
+    scrollbar-color: var(--accent) var(--paper);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-text);
+    font-size: var(--text);
+    line-height: var(--leading);
+    font-feature-settings: "palt" 1; /* 中文标点挤压 */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--paper);
+  }
+
+  a {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.1875rem;
+    text-decoration-color: var(--accent);
+    transition: text-decoration-thickness 120ms var(--ease-out);
+  }
+
+  a:hover {
+    text-decoration-thickness: 2px; /* 加粗，不换色 */
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+}
+
+@layer layout {
+  .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: var(--gap);
+    max-inline-size: 90rem;
+    padding-inline: var(--gutter);
+    padding-block: var(--shell-top);
+    margin-inline: auto;
+  }
+
+  .intro {
+    grid-column: 1;
+    position: sticky;
+    top: var(--shell-top);
+    align-self: start;
+    block-size: calc(100svh - 2 * var(--shell-top));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    grid-column: 2;
+    max-inline-size: var(--measure);
+    padding-block-end: 12rem;
+  }
+}
+
+@layer content {
+  /* 左栏：身份 */
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .brand-en {
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+  }
+
+  .name {
+    margin-block-start: 2rem;
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .tagline {
+    margin-block-start: 1rem;
+    max-inline-size: 18rem;
+    color: var(--muted);
+  }
+
+  .intro-nav {
+    margin-block-start: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+  }
+
+  .intro-foot {
+    margin-block-start: auto;
+    padding-block-end: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  /* 右栏：内容流 */
+  .lead {
+    font-size: 1.5rem;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .copy {
+    margin-block-start: 1.25rem;
+  }
+
+  .section {
+    margin-block-start: 5rem;
+    padding-block-start: 2rem;
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .section-title {
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    color: var(--muted);
+  }
+
+  .items {
+    margin-block-start: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .item {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1rem;
+  }
+
+  .item-no {
+    padding-block-start: 0.3rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .item-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .item-desc {
+    margin-block-start: 0.5rem;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .status {
+    display: inline-block;
+    margin-block-start: 0.75rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .timeline {
+    margin-block-start: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 5.5rem 1fr;
+    gap: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .timeline time {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .contact-link {
+    font-size: 1.125rem;
+  }
+
+  @media (max-width: 860px) {
+    .shell {
+      grid-template-columns: 1fr;
+      padding-inline: 1.5rem;
+      padding-block: 1.75rem;
+    }
+
+    .intro {
+      position: static;
+      block-size: auto;
+      padding-block-end: 2rem;
+      border-block-end: 1px solid var(--rule);
+    }
+
+    .intro-foot {
+      margin-block-start: 2rem;
+    }
+
+    .content {
+      grid-column: 1;
+      max-inline-size: none;
+      padding-block-end: 6rem;
+    }
+
+    .section {
+      margin-block-start: 3.5rem;
+    }
+  }
+}

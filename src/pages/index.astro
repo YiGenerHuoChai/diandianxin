@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="点心 · 一根儿火柴"
+  description="点心：一个慢慢长大的个人网站。心理学在读，偶尔写点东西，偶尔做点实验。"
+>
+  <div class="shell">
+    <header class="intro">
+      <p class="brand">点心 <span class="brand-en">DIANDIANXIN</span></p>
+
+      <h1 class="name">一根儿火柴</h1>
+
+      <p class="tagline">心理学在读，偶尔写点东西。</p>
+
+      <nav class="intro-nav" aria-label="站内导航">
+        <a href="#grow">这里会长出</a>
+        <a href="#now">最近在做</a>
+        <a href="#contact">联系</a>
+      </nav>
+
+      <footer class="intro-foot">
+        <a href="mailto:hi@diandianxin.com">hi@diandianxin.com</a>
+      </footer>
+    </header>
+
+    <main class="content">
+      <section class="opening" aria-label="开场">
+        <p class="lead">你好，我是点心。</p>
+        <p class="copy">心理学在读，偶尔写点东西，偶尔做点实验和小工具。</p>
+        <p class="copy">
+          「点心」是两件事：一是吃的点心——用吃块点心的工夫，随手看点东西；
+          二是火堆的芯——底下的火不灭。
+        </p>
+        <p class="copy">一根儿火柴，点燃自己，也帮别人把火引起来。</p>
+      </section>
+
+      <section id="grow" class="section" aria-labelledby="grow-title">
+        <h2 id="grow-title" class="section-title">这里会长出</h2>
+
+        <ol class="items">
+          <li class="item">
+            <span class="item-no">01</span>
+            <div>
+              <h3 class="item-title">想法与随笔</h3>
+              <p class="item-desc">心理学视角看日常。写那些想不明白、但值得想的事。</p>
+              <span class="status">筹备中</span>
+            </div>
+          </li>
+          <li class="item">
+            <span class="item-no">02</span>
+            <div>
+              <h3 class="item-title">知识汇总</h3>
+              <p class="item-desc">把读过的论文和书，整理成能直接用的东西。</p>
+              <span class="status">筹备中</span>
+            </div>
+          </li>
+          <li class="item">
+            <span class="item-no">03</span>
+            <div>
+              <h3 class="item-title">可交互实验</h3>
+              <p class="item-desc">把心理学里的经典实验，做成能亲手玩一遍的小程序。</p>
+              <span class="status">筹备中</span>
+            </div>
+          </li>
+          <li class="item">
+            <span class="item-no">04</span>
+            <div>
+              <h3 class="item-title">心理测验</h3>
+              <p class="item-desc">不是娱乐测试，是认真设计、有据可依的自我探索。</p>
+              <span class="status">筹备中</span>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section id="now" class="section" aria-labelledby="now-title">
+        <h2 id="now-title" class="section-title">最近在做</h2>
+
+        <ul class="timeline">
+          <li>
+            <time datetime="2026-11-03">2026.11.03</time>
+            <span>网站动工：骨架搭起来了，本站正式开工。</span>
+          </li>
+          <li>
+            <time datetime="2026-11">2026.11</time>
+            <span>第一批「想法与随笔」正在整理中。</span>
+          </li>
+        </ul>
+      </section>
+
+      <section id="contact" class="section" aria-labelledby="contact-title">
+        <h2 id="contact-title" class="section-title">联系</h2>
+        <p class="copy">想聊点什么，或者想一起做点东西，写信给我。</p>
+        <p class="copy">
+          <a class="contact-link" href="mailto:hi@diandianxin.com">hi@diandianxin.com</a>
+        </p>
+      </section>
+    </main>
+  </div>
+</Layout>
