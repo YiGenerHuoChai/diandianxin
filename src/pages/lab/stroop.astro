@@ -17,12 +17,12 @@ import Layout from '../../layouts/Layout.astro';
 
         <section id="stage-start" class="stroop-panel">
           <p class="lead">你会看到一些用彩色墨水印的颜色词。请尽可能快而准确地报告墨水的颜色，而不是词的意思。</p>
-          <p class="copy stroop-meta">一共 20 题，大概 1 分钟。</p>
+          <p class="copy stroop-meta">先做 3 题练习，再做正式实验。</p>
           <button class="stroop-btn stroop-start" data-start>开始</button>
         </section>
 
         <section id="stage-run" class="stroop-panel" hidden>
-          <p class="stroop-progress"><span data-progress>1</span> / 20</p>
+          <p class="stroop-progress" data-progress-text>1 / 20</p>
           <div id="stroop-word" class="stroop-word">红</div>
           <div class="stroop-options">
             <button class="stroop-btn" data-color="red">红</button>
@@ -30,7 +30,8 @@ import Layout from '../../layouts/Layout.astro';
             <button class="stroop-btn" data-color="blue">蓝</button>
             <button class="stroop-btn" data-color="yellow">黄</button>
           </div>
-          <p class="stroop-hint">也可以按键盘 1 / 2 / 3 / 4</p>
+          <p class="stroop-hint" data-hint>也可以按键盘 1 / 2 / 3 / 4</p>
+          <p class="stroop-feedback" data-feedback></p>
         </section>
 
         <section id="stage-done" class="stroop-panel" hidden>
@@ -164,6 +165,13 @@ import Layout from '../../layouts/Layout.astro';
     color: var(--muted);
   }
 
+  .stroop-feedback {
+    margin-block-start: 1rem;
+    min-block-size: 1.5em;
+    font-size: 1rem;
+    color: var(--ink);
+  }
+
   .stroop-result {
     margin-block: 2rem;
     display: flex;
@@ -205,10 +213,13 @@ import Layout from '../../layouts/Layout.astro';
 
   const $ = (sel) => document.querySelector(sel);
   const wordEl = $('#stroop-word');
-  const progressEl = document.querySelector('[data-progress]');
+  const progressEl = document.querySelector('[data-progress-text]');
+  const hintEl = document.querySelector('[data-hint]');
+  const feedbackEl = document.querySelector('[data-feedback]');
 
-  let trials = [];
-  let idx = 0;
+  let phase = 'ready'; // ready | practice | test | done
+  let queue = [];
+  let qi = 0;
   let shownAt = 0;
   let data = { congruent: [], incongruent: [] };
   let running = false;
@@ -221,7 +232,15 @@ import Layout from '../../layouts/Layout.astro';
     return list;
   }
 
-  function build() {
+  function buildPractice() {
+    return shuffle([
+      { word: 'red', color: 'blue', cond: 'incongruent' },
+      { word: 'green', color: 'yellow', cond: 'incongruent' },
+      { word: 'blue', color: 'blue', cond: 'congruent' },
+    ]);
+  }
+
+  function buildTest() {
     const list = [];
     for (let i = 0; i < 10; i++) {
       const c = COLORS[i % COLORS.length];
@@ -236,10 +255,18 @@ import Layout from '../../layouts/Layout.astro';
     return shuffle(list);
   }
 
+  function setProgress() {
+    const label = phase === 'practice' ? '练习 ' : '';
+    progressEl.textContent = `${label}${qi + 1} / ${queue.length}`;
+  }
+
   function next() {
-    if (idx >= trials.length) return finish();
-    const t = trials[idx];
-    progressEl.textContent = String(idx + 1);
+    if (qi >= queue.length) {
+      if (phase === 'practice') return startTest();
+      return finish();
+    }
+    const t = queue[qi];
+    setProgress();
     wordEl.textContent = LABEL[t.word];
     wordEl.style.color = HEX[t.color];
     shownAt = performance.now();
@@ -247,24 +274,51 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   function start() {
-    trials = build();
-    idx = 0;
+    phase = 'practice';
+    queue = buildPractice();
+    qi = 0;
     data = { congruent: [], incongruent: [] };
     $('#stage-start').hidden = true;
     $('#stage-done').hidden = true;
     $('#stage-run').hidden = false;
+    hintEl.hidden = false;
+    feedbackEl.textContent = '';
     next();
   }
 
+  function startTest() {
+    phase = 'test';
+    queue = buildTest();
+    qi = 0;
+    hintEl.hidden = true;
+    wordEl.textContent = '';
+    feedbackEl.textContent = '练习结束，正式实验开始（20 题，不再提示对错）。';
+    setTimeout(() => {
+      feedbackEl.textContent = '';
+      next();
+    }, 1400);
+  }
+
   function answer(key) {
-    if (!running || idx >= trials.length) return;
+    if (!running || qi >= queue.length) return;
     running = false;
     const rt = performance.now() - shownAt;
-    const t = trials[idx];
-    data[t.cond].push({ rt, correct: key === t.color });
-    idx += 1;
-    wordEl.textContent = '';
-    setTimeout(next, 200);
+    const t = queue[qi];
+    const correct = key === t.color;
+    qi += 1;
+
+    if (phase === 'practice') {
+      feedbackEl.textContent = correct ? '✓ 对' : `✗ 不对，应该是「${LABEL[t.color]}」`;
+      wordEl.textContent = '';
+      setTimeout(() => {
+        feedbackEl.textContent = '';
+        next();
+      }, 900);
+    } else {
+      data[t.cond].push({ rt, correct });
+      wordEl.textContent = '';
+      setTimeout(next, 200);
+    }
   }
 
   function avg(list) {
@@ -274,6 +328,7 @@ import Layout from '../../layouts/Layout.astro';
   }
 
   function finish() {
+    phase = 'done';
     running = false;
     $('#stage-run').hidden = true;
     $('#stage-done').hidden = false;
@@ -303,6 +358,7 @@ import Layout from '../../layouts/Layout.astro';
 
   document.querySelector('[data-start]').addEventListener('click', start);
   document.querySelector('[data-restart]').addEventListener('click', () => {
+    phase = 'ready';
     $('#stage-done').hidden = true;
     $('#stage-start').hidden = false;
   });
