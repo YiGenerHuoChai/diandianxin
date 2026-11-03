@@ -20,5 +20,30 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <slot />
+    <script>
+      // 章节目录跟随内容：让右侧链接与对应标题保持同一水平线
+      const chapters = document.querySelectorAll('.chapter-link');
+      const nav = document.querySelector('.chapters');
+
+      if (chapters.length && nav) {
+        const align = () => {
+          if (!window.matchMedia('(min-width: 1101px)').matches) return;
+          const base = nav.getBoundingClientRect().top + window.scrollY;
+          chapters.forEach((link) => {
+            const title = document.querySelector(
+              `${link.getAttribute('href')} .section-title`
+            );
+            if (!title) return;
+            const top = title.getBoundingClientRect().top + window.scrollY - base;
+            link.style.top = `${top}px`;
+          });
+        };
+
+        align();
+        window.addEventListener('load', align);
+        const content = document.querySelector('.content');
+        if (content) new ResizeObserver(align).observe(content);
+      }
+    </script>
   </body>
 </html>
