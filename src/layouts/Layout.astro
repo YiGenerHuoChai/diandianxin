@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import theme from '../content/theme.json';
 
 interface Props {
   title: string;
@@ -10,7 +11,7 @@ const { title, description } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" style={`--scale: ${theme.scale}`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -18,7 +18,7 @@
     button { font:inherit; font-size:13px; padding:.35rem .9rem; border:1px solid var(--ink); background:#fff; color:var(--ink); border-radius:4px; cursor:pointer; }
     button:hover { background:var(--ink); color:#fff; }
     button.ghost { border-color:var(--rule); color:var(--muted); }
-    .layout { display:grid; grid-template-columns: minmax(340px, 440px) 1fr; height:calc(100vh - 53px); }
+    .layout { display:grid; grid-template-columns: minmax(340px, 440px) 1fr; height:calc(100vh - 59px); }
     .form { overflow:auto; padding:1rem 1.25rem 3rem; border-right:1px solid var(--rule); background:#fff; }
     fieldset { border:none; margin:0 0 1.5rem; padding:0; }
     legend { font-size:12px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; margin-bottom:.6rem; }
@@ -29,6 +29,8 @@
     .item-row { display:grid; grid-template-columns: 4.5rem 1fr; gap:.5rem; padding:.6rem; border:1px solid var(--rule); border-radius:6px; margin-bottom:.6rem; background:#fbfaf7; }
     .now-row { display:grid; grid-template-columns: 6.5rem 1fr 2rem; gap:.4rem; margin-bottom:.4rem; align-items:start; }
     .now-row button { padding:.2rem .4rem; font-size:12px; }
+    .scale-row { display:grid; grid-template-columns: 1fr 5rem; gap:.5rem; align-items:center; margin-top:.2rem; }
+    .scale-row input[type="range"] { padding:0; height:36px; }
     .preview { background:#e9e5dd; padding:.75rem; }
     iframe { width:100%; height:100%; border:0; background:var(--paper); border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
     .hint { font-size:12px; color:var(--muted); margin:.4rem 0; }
@@ -78,11 +80,20 @@
 
       form.innerHTML = [
         group(
+          '显示',
+          `<label for="scale">全站字号（百分比）</label>
+           <div class="scale-row">
+             <input type="range" id="scaleRange" min="85" max="130" step="1" value="115">
+             <input type="number" id="scaleNum" min="85" max="130" step="1" value="115">
+           </div>
+           <p class="hint">100 是原始大小；110–120 大约相当于「大两号」</p>`
+        ),
+        group(
           '身份',
-          field('名字', 'name', data.name) +
+          field('名字（空着不显示）', 'name', data.name) +
             field('一句话简介', 'tagline', data.tagline) +
-            field('品牌名（点心）', 'brand', data.brand) +
-            field('英文名', 'brandEn', data.brandEn) +
+            field('品牌名（顶部小字）', 'brand', data.brand) +
+            field('英文/域名（顶部小字）', 'brandEn', data.brandEn) +
             field('联系邮箱', 'email', data.email)
         ),
         group(
@@ -93,7 +104,7 @@
           '章节目录（右栏三个标题）',
           field('这里亮着', 'chapterGrow', data.chapters?.grow) +
             field('最近做的', 'chapterNow', data.chapters?.now) +
-            field('和我聊聊', 'chapterContact', data.chapters?.contact)
+            field('一起聊聊', 'chapterContact', data.chapters?.contact)
         ),
         group(
           '这里亮着 · 四个分站',
@@ -116,7 +127,7 @@
           `<div id="nowRows"></div><button type="button" class="ghost add" id="addNow">＋ 加一条</button>`
         ),
         group(
-          '和我聊聊',
+          '一起聊聊',
           area('一句话', 'contactText', data.contact?.text) +
             field('显示邮箱', 'contactEmail', data.contact?.email)
         ),
@@ -127,6 +138,15 @@
       $('#addNow').addEventListener('click', () => {
         nowEntries.push({ date: '', text: '' });
         renderNowRows();
+      });
+
+      const range = $('#scaleRange');
+      const num = $('#scaleNum');
+      range.addEventListener('input', () => {
+        num.value = range.value;
+      });
+      num.addEventListener('input', () => {
+        range.value = num.value;
       });
     }
 
@@ -201,11 +221,23 @@
       };
     }
 
+    function applyTheme(theme) {
+      const pct = Math.round(Number(theme?.scale ?? 1.15) * 100);
+      const range = $('#scaleRange');
+      const num = $('#scaleNum');
+      if (range) range.value = pct;
+      if (num) num.value = pct;
+    }
+
     async function load() {
       try {
-        const res = await fetch('/api/content');
-        if (!res.ok) throw new Error('读取失败 ' + res.status);
-        render(await res.json());
+        const [contentRes, themeRes] = await Promise.all([
+          fetch('/api/content'),
+          fetch('/api/theme'),
+        ]);
+        if (!contentRes.ok || !themeRes.ok) throw new Error('读取失败');
+        render(await contentRes.json());
+        applyTheme(await themeRes.json());
       } catch (err) {
         status.textContent = '读取失败：' + err.message;
         status.className = 'err';
@@ -216,12 +248,21 @@
       status.textContent = '保存中…';
       status.className = '';
       try {
-        const res = await fetch('/api/content', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(collect()),
-        });
-        if (!res.ok) throw new Error(await res.text());
+        const scale = Number($('#scaleNum').value) / 100;
+        const [r1, r2] = await Promise.all([
+          fetch('/api/content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(collect()),
+          }),
+          fetch('/api/theme', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scale }),
+          }),
+        ]);
+        if (!r1.ok) throw new Error('内容保存失败：' + (await r1.text()));
+        if (!r2.ok) throw new Error('字号保存失败：' + (await r2.text()));
         status.textContent = '已保存 ✓';
         status.className = 'ok';
         setTimeout(() => {

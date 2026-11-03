@@ -68,6 +68,8 @@
 
 @layer base {
   html {
+    /* 全站字号缩放：面板可调；rem 尺寸（字号/行高/行宽/间距）等比跟随 */
+    font-size: calc(16px * var(--scale, 1.15));
     background: var(--paper);
     color: var(--ink);
     scrollbar-color: var(--accent) var(--paper);

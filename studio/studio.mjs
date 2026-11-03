@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 const contentPath = join(root, 'src', 'content', 'site.json');
+const themePath = join(root, 'src', 'content', 'theme.json');
 const pagePath = join(here, 'studio.html');
 const port = Number(process.env.STUDIO_PORT ?? 4322);
 
@@ -32,10 +33,39 @@ const server = createServer(async (req, res) => {
       return;
     }
 
+    if (req.method === 'GET' && req.url === '/api/theme') {
+      const json = await readFile(themePath, 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(json);
+      return;
+    }
+
     if (req.method === 'GET' && req.url === '/api/content') {
       const json = await readFile(contentPath, 'utf8');
       res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
       res.end(json);
+      return;
+    }
+
+    if (req.method === 'POST' && req.url === '/api/theme') {
+      const body = await readBody(req);
+      let data;
+      try {
+        data = JSON.parse(body);
+      } catch {
+        res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('内容不是合法的 JSON');
+        return;
+      }
+      const scale = Number(data?.scale);
+      if (!Number.isFinite(scale) || scale < 0.8 || scale > 1.4) {
+        res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
+        res.end('scale 超出范围（0.8–1.4）');
+        return;
+      }
+      await writeFile(themePath, JSON.stringify({ scale }, null, 2) + '\n', 'utf8');
+      res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ ok: true }));
       return;
     }
 
