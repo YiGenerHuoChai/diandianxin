@@ -58,9 +58,9 @@ const server = createServer(async (req, res) => {
         return;
       }
       const scale = Number(data?.scale);
-      if (!Number.isFinite(scale) || scale < 0.8 || scale > 1.4) {
+      if (!Number.isFinite(scale) || scale < 0.8 || scale > 1.6) {
         res.writeHead(400, { 'Content-Type': 'text/plain; charset=utf-8' });
-        res.end('scale 超出范围（0.8–1.4）');
+        res.end('scale 超出范围（0.8–1.6）');
         return;
       }
       await writeFile(themePath, JSON.stringify({ scale }, null, 2) + '\n', 'utf8');
