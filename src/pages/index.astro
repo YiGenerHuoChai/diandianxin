@@ -6,14 +6,14 @@ const toDatetime = (date: string) => date.replaceAll('.', '-');
 ---
 
 <Layout
-  title={`${site.brand} · ${site.name}`}
-  description={`${site.brand}：一个慢慢长大的个人网站。${site.tagline}`}
+  title={site.name ? `${site.brand} · ${site.name}` : site.brand}
+  description={`${site.brand}：${site.tagline}。心理学小知识、经典实验和小测评。`}
 >
   <div class="shell">
     <header class="intro">
       <p class="brand">{site.brand} <span class="brand-en">{site.brandEn}</span></p>
 
-      <h1 class="name">{site.name}</h1>
+      <h1 class="name">{site.name || site.brand}</h1>
 
       <p class="tagline">{site.tagline}</p>
 
