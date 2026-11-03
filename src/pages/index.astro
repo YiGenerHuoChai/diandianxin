@@ -6,8 +6,8 @@ const toDatetime = (date: string) => date.replaceAll('.', '-');
 ---
 
 <Layout
-  title={site.name ? `${site.brand} · ${site.name}` : site.brand}
-  description={`${site.brand}：${site.tagline}。心理学小知识、经典实验和小测评。`}
+  title={[site.brand, site.name].filter(Boolean).join(' · ') || '点心'}
+  description={`${[site.brand, site.tagline].filter(Boolean).join('：')}。心理学小知识、经典实验和小测评。`}
 >
   <div class="shell">
     <header class="intro">
