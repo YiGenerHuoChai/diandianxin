@@ -21,6 +21,7 @@ const contentDir = join(root, 'src', 'content');
 const pagesDir = join(contentDir, 'pages');
 const sitePath = join(contentDir, 'site.json');
 const themePath = join(contentDir, 'theme.json');
+const notesPath = join(contentDir, 'notes.json');
 const pagePath = join(here, 'studio.html');
 const port = Number(process.env.STUDIO_PORT ?? 4322);
 const SITE = { host: '127.0.0.1', port: Number(process.env.DEV_PORT ?? 4321) };
@@ -86,6 +87,7 @@ const handleApi = async (req, res, url) => {
       pages: await listPages(),
       site: JSON.parse(await readFile(sitePath, 'utf8')),
       theme: JSON.parse(await readFile(themePath, 'utf8')),
+      notes: JSON.parse(await readFile(notesPath, 'utf8')),
     });
     return;
   }
@@ -179,6 +181,24 @@ const handleApi = async (req, res, url) => {
       ) + '\n',
       'utf8',
     );
+    replyJson(res, { ok: true });
+    return;
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/notes') {
+    const raw = await readBody(req);
+    let data;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      replyText(res, '内容不是合法的 JSON');
+      return;
+    }
+    if (!data || typeof data !== 'object' || !Array.isArray(data.notes)) {
+      replyText(res, '结构不对：需要 notes 数组');
+      return;
+    }
+    await writeFile(notesPath, JSON.stringify({ notes: data.notes }, null, 2) + '\n', 'utf8');
     replyJson(res, { ok: true });
     return;
   }

@@ -211,14 +211,22 @@
       </div>
     </section>
 
-    <section class="group">
+    <section class="group" id="pageGroup">
       <div class="group-title">页面</div>
       <div class="field"><label>页面标题</label><input id="pageTitle"></div>
       <div class="field"><label>一句话简介</label><input id="pageTagline"></div>
       <div class="field field-check"><label><input type="checkbox" id="pageWide"> 宽版布局（内容区加宽，适合卡片墙）</label></div>
     </section>
 
-    <section class="group">
+    <section class="group" id="notesGroup" hidden>
+      <div class="group-title">文章</div>
+      <div id="noteRows"></div>
+      <div class="add-block">
+        <button type="button" id="addNote">＋ 加一篇</button>
+      </div>
+    </section>
+
+    <section class="group" id="blocksGroup">
       <div class="group-title">内容区块</div>
       <div id="blocks"></div>
       <div class="add-block">
@@ -242,7 +250,7 @@
   const $ = (id) => document.getElementById(id);
   const PREVIEW_BASE = ''; // 同源：面板和预览都在 4322，预览请求由 studio.mjs 代理到 Astro dev
 
-  const state = { pages: {}, site: {}, theme: { scale: 1 }, file: 'home' };
+  const state = { pages: {}, site: {}, theme: { scale: 1 }, notes: [], file: 'home' };
   let dirty = false;
 
   const BLOCK_TYPES = { text: '文字段落', cards: '条目列表', 'card-wall': '卡片墙', timeline: '时间线', contact: '联系' };
@@ -300,6 +308,21 @@
   // ── 渲染 ─────────────────────────────────────────────
 
   function render() {
+    if (state.file === 'notes') {
+      $('pageGroup').hidden = true;
+      $('blocksGroup').hidden = true;
+      $('notesGroup').hidden = false;
+      const tag = $('pageTag');
+      tag.textContent = '正在编辑：随便写写（/notes）';
+      tag.className = 'page-tag';
+      renderNotes();
+      return;
+    }
+
+    $('pageGroup').hidden = false;
+    $('blocksGroup').hidden = false;
+    $('notesGroup').hidden = true;
+
     const page = currentPage();
     if (!page) return;
 
@@ -312,6 +335,37 @@
     $('pageWide').checked = page.wide === true;
 
     renderBlocks(page);
+  }
+
+  function renderNotes() {
+    const box = $('noteRows');
+    box.innerHTML = '';
+    state.notes.forEach((note, index) => {
+      box.appendChild(noteCard(note, index));
+    });
+  }
+
+  function noteCard(note, index) {
+    const card = el('div', 'block-card');
+
+    const head = el('div', 'block-head');
+    head.appendChild(el('span', 'block-type', '第 ' + (index + 1) + ' 篇'));
+    head.appendChild(
+      btn('删除', () => {
+        if (!confirm('删除这篇？')) return;
+        state.notes.splice(index, 1);
+        renderNotes();
+      }),
+    );
+    card.appendChild(head);
+
+    card.appendChild(field('标题', note.title, (v) => { note.title = v; }));
+    card.appendChild(field('地址名（英文小写连字符）', note.slug, (v) => { note.slug = v; }));
+    card.appendChild(field('日期（如 2026.11.03）', note.date, (v) => { note.date = v; }));
+    card.appendChild(field('摘要（列表里的一行）', note.excerpt, (v) => { note.excerpt = v; }));
+    card.appendChild(field('正文（空行分段）', note.body, (v) => { note.body = v; }, { textarea: true, rows: 10 }));
+
+    return card;
   }
 
   function renderBlocks(page) {
@@ -474,6 +528,7 @@
       state.pages = data.pages;
       state.site = data.site;
       state.theme = data.theme;
+      state.notes = data.notes?.notes || [];
 
       const scale = Math.round((Number(state.theme.scale) || 1) * 100);
       $('fontScale').value = scale;
@@ -488,6 +543,24 @@
   }
 
   async function save() {
+    if (state.file === 'notes') {
+      setStatus('保存中…');
+      try {
+        const res = await fetch('/api/notes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes: state.notes }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        dirty = false;
+        setStatus('已保存 ✓', 'ok');
+        refreshPreview();
+      } catch (err) {
+        setStatus('保存失败：' + err.message, 'err');
+      }
+      return;
+    }
+
     const page = currentPage();
     if (!page) return;
     setStatus('保存中…');
@@ -523,8 +596,7 @@
   }
 
   function refreshPreview() {
-    const page = currentPage();
-    const path = page?.path || '/';
+    const path = state.file === 'notes' ? '/notes' : currentPage()?.path || '/';
     $('preview').src = PREVIEW_BASE + path + '?t=' + Date.now();
   }
 
@@ -539,8 +611,9 @@
     } catch {
       return;
     }
-    const file = fileFromPath(path);
-    if (state.pages[file] && file !== state.file) {
+    const isNotes = path === '/notes' || path.startsWith('/notes/');
+    const file = isNotes ? 'notes' : fileFromPath(path);
+    if (file !== state.file && (isNotes || state.pages[file])) {
       state.file = file;
       render();
     }
@@ -602,6 +675,18 @@
   $('pageWide').addEventListener('change', (event) => {
     const page = currentPage();
     if (page) page.wide = event.target.checked || undefined;
+    dirty = true;
+  });
+
+  $('addNote').addEventListener('click', () => {
+    state.notes.push({
+      slug: 'note-' + Date.now(),
+      title: '新的一篇',
+      date: new Date().toISOString().slice(0, 10).replaceAll('-', '.'),
+      excerpt: '',
+      body: '',
+    });
+    renderNotes();
     dirty = true;
   });
 
