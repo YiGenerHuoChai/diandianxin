@@ -1,7 +1,7 @@
 {
   "path": "/cards",
   "title": "心理识卡",
-  "tagline": "一张卡，一个心理学小知识。",
+  "tagline": "一张卡，一个心理学tips。",
   "description": "点心 · 心理识卡：一张卡带你了解心理学小知识。",
   "back": true,
   "wide": true,
@@ -9,8 +9,8 @@
     {
       "type": "text",
       "items": [
-        "每张卡讲一个心理学的小知识：正面是一句话和一个名字，点开能看到它到底是什么、以及一个你身边的例子。",
-        "想起什么就写什么，慢慢攒。"
+        "书太厚，不知道从哪里开始？文献太复杂，读不下去？心理识卡，一张卡解答一个你可能一直在思考的问题。",
+        "努力更新中……"
       ]
     },
     {
@@ -21,65 +21,85 @@
           "name": "确认偏误 Confirmation Bias",
           "intro": "一旦相信某个说法，就会不自觉地只收集支持它的证据。",
           "detail": "确认偏误指人们倾向于寻找、解释和记住那些支持自己已有信念的信息，而忽略相反的证据。它让我们的判断越来越自信，哪怕判断本身是错的。",
-          "example": "买了一件衣服后，你会格外注意夸它好看的人，自动过滤掉说它一般的评价。"
+          "example": "买了一件衣服后，你会格外注意夸它好看的人，自动过滤掉说它一般的评价。",
+          "sourceBy": "Peter C. Wason",
+          "sourceCite": "Wason, P. C. (1960). On the failure to eliminate hypotheses in a conceptual task. *Quarterly Journal of Experimental Psychology*, 12(3), 129–140. https://doi.org/10.1080/17470216008416717"
         },
         {
           "title": "第一印象为什么这么难改",
           "name": "首因效应 Primacy Effect",
           "intro": "最先得到的信息，会左右你之后对一个人的判断。",
           "detail": "首因效应指在一系列信息中，最先出现的信息对印象形成的影响最大。后面的信息并不是没被看到，而是会被已有的印象染色。",
-          "example": "同一个人先被介绍为「很贴心」，后来听说他爱迟到，你也会替他解释成「只是偶尔忙」；反过来就未必了。"
+          "example": "同一个人先被介绍为「很贴心」，后来听说他爱迟到，你也会替他解释成「只是偶尔忙」；反过来就未必了。",
+          "sourceBy": "Solomon E. Asch",
+          "sourceCite": "Asch, S. E. (1946). Forming impressions of personality. *The Journal of Abnormal and Social Psychology*, 41(3), 258–290. https://doi.org/10.1037/h0055756"
         },
         {
           "title": "越难想起来的事，越觉得常见",
           "name": "可得性启发 Availability Heuristic",
           "intro": "判断一件事多不多、危不危险，我们靠的是「想起来难不难」。",
           "detail": "可得性启发指人们根据某类事件在记忆中容易被提取的程度，来估计它发生的频率。容易想起，就以为常见。",
-          "example": "新闻连续报道几起飞机事故后，你会高估坐飞机的风险——尽管统计上它比开车安全得多。"
+          "example": "新闻连续报道几起飞机事故后，你会高估坐飞机的风险——尽管统计上它比开车安全得多。",
+          "sourceBy": "Amos Tversky & Daniel Kahneman",
+          "sourceCite": "Tversky, A., & Kahneman, D. (1973). Availability: A heuristic for judging frequency and probability. *Cognitive Psychology*, 5(2), 207–232. https://doi.org/10.1016/0010-0285(73)90033-9"
         },
         {
           "title": "为什么等电梯时总想按关门键",
           "name": "控制幻觉 Illusion of Control",
           "intro": "在其实不由你控制的事上，你以为自己做点什么会有用。",
           "detail": "控制幻觉指人们高估自己对随机或不可控事件影响力的倾向。它不完全是坏事——在做点什么的那一刻，焦虑确实降下来了。",
-          "example": "按关门键并不会让电梯更快，但按下去的那一下，你觉得自己至少做了点什么。"
+          "example": "按关门键并不会让电梯更快，但按下去的那一下，你觉得自己至少做了什么。",
+          "sourceBy": "Ellen J. Langer",
+          "sourceCite": "Langer, E. J. (1975). The illusion of control. *Journal of Personality and Social Psychology*, 32(2), 311–328. https://doi.org/10.1037/0022-3514.32.2.311"
         },
         {
           "title": "你记住的，可能不是当时那样",
           "name": "重构性记忆 Reconstructive Memory",
           "intro": "回忆不是回放，每次都在重新拼一遍。",
           "detail": "重构性记忆指记忆不是被完整存下来、原样取出来的，而是每次回忆时用片段和已有知识重新组装。所以每回忆一次，都可能被悄悄改动一点。",
-          "example": "你和朋友讲同一件小时候的事，细节对不上，但你们都确信自己记得没错。"
+          "example": "你和朋友讲同一件小时候的事，细节对不上，但你们都确信自己记得没错。",
+          "sourceBy": "Frederic C. Bartlett",
+          "sourceCite": "Bartlett, F. C. (1932). *Remembering: A study in experimental and social psychology*. Cambridge University Press."
         },
         {
           "title": "别人其实没那么在意你",
           "name": "焦点效应 Spotlight Effect",
           "intro": "你以为大家都在注意你，其实没人那么在意。",
           "detail": "焦点效应指人们高估他人对自己外表和行为的关注程度。我们习惯站在自己的视角，于是误以为自己是别人注意的中心。",
-          "example": "衣服上沾了一点污渍，你别扭一整天；问身边人，大多根本没注意到。"
+          "example": "衣服上沾了一点污渍，你别扭一整天；问身边人，大多根本没注意到。",
+          "sourceBy": "Thomas Gilovich, Victoria H. Medvec & Kenneth Savitsky",
+          "sourceCite": "Gilovich, T., Medvec, V. H., & Savitsky, K. (2000). The spotlight effect in social judgment: An egocentric bias in estimates of the salience of one's own actions and appearance. *Journal of Personality and Social Psychology*, 78(2), 211–222. https://doi.org/10.1037/0022-3514.78.2.211"
         },
         {
           "title": "为什么越焦虑越拖延",
           "name": "回避型应对 Avoidance Coping",
           "intro": "逃避不是懒，是焦虑替你选了「先不看它」。",
           "detail": "回避型应对指面对压力情境时，用拖延、转移注意力等方式回避负面情绪。短期焦虑是降下来了，但任务积压，长期焦虑反而更大。",
-          "example": "明天要交的作业，今晚刷了三小时手机——不是不想写，是一想到写就难受，于是先躲开。"
+          "example": "明天要交的作业，今晚刷了三小时手机——不是不想写，是一想到写就难受，于是先躲开。",
+          "sourceBy": "Susan Roth & Lawrence J. Cohen",
+          "sourceCite": "Roth, S., & Cohen, L. J. (1986). Approach, avoidance, and coping with stress. *American Psychologist*, 41(7), 813–819. https://doi.org/10.1037/0003-066X.41.7.813"
         },
         {
           "title": "「多试几次」比「你真聪明」更有用",
           "name": "成长型思维 Growth Mindset",
           "intro": "相信能力可以练出来的人，更愿意接受挑战。",
           "detail": "成长型思维（Dweck）指认为能力可以通过努力提升的信念。持这种信念的人，更倾向于把失败看成「还没学会」，而不是「我不行」。",
-          "example": "同一道难题，被夸「聪明」的孩子容易放弃，被鼓励「多试几次」的孩子更愿意继续。"
+          "example": "同一道难题，被夸「聪明」的孩子容易放弃，被鼓励「多试几次」的孩子更愿意继续。",
+          "sourceBy": "Claudia M. Mueller & Carol S. Dweck",
+          "sourceCite": "Mueller, C. M., & Dweck, C. S. (1998). Praise for intelligence can undermine children's motivation and performance. *Journal of Personality and Social Psychology*, 75(1), 33–52. https://doi.org/10.1037/0022-3514.75.1.33",
+          "sourceAlt": "延伸阅读：Dweck, C. S. (2006). *Mindset: The new psychology of success*. Random House."
         },
         {
           "title": "情绪会传染",
           "name": "情绪感染 Emotional Contagion",
           "intro": "情绪像感冒，靠近的人容易被传染。",
           "detail": "情绪感染指人们在互动中会不自觉地模仿他人的表情、语调和姿态，并因此感受到相似的情绪。它发生得很快，往往来不及反应。",
-          "example": "室友一进门就满脸乌云，你什么都没说，但十分钟后也莫名烦躁。"
+          "example": "室友一进门就满脸乌云，你什么都没说，但十分钟后也莫名烦躁。",
+          "sourceBy": "Elaine Hatfield, John T. Cacioppo & Richard L. Rapson",
+          "sourceCite": "Hatfield, E., Cacioppo, J. T., & Rapson, R. L. (1993). Emotional contagion. *Current Directions in Psychological Science*, 2(3), 96–99. https://doi.org/10.1111/1467-8721.ep10770953"
         }
-      ]
+      ],
+      "nav": ""
     }
   ]
 }

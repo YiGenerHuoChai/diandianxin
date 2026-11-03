@@ -383,6 +383,43 @@
     color: var(--muted);
   }
 
+  /* 卡片来源（APA-7 引用） */
+  .card-source {
+    margin-block-start: 1.5rem;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .card-source-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+  }
+
+  .card-source-by {
+    margin-block-start: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .card-source-cite {
+    margin-block-start: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .card-source-cite em {
+    font-style: italic;
+  }
+
+  .card-source-alt {
+    margin-block-start: 0.5rem;
+    font-size: 0.8125rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+
   /* 卡片弹窗 */
   dialog.card-dialog {
     max-inline-size: min(34rem, calc(100vw - 2 * var(--gutter)));

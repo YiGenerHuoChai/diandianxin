@@ -5,6 +5,9 @@ interface Props {
 }
 
 const { blocks } = Astro.props;
+
+// 引用里的 *斜体* 转成 <em>（APA-7 的期刊名/书名用斜体）
+const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 ---
 
 {
@@ -81,6 +84,14 @@ const { blocks } = Astro.props;
               {card.intro && <p class="card-copy card-intro">{card.intro}</p>}
               {card.detail && <p class="card-copy">{card.detail}</p>}
               {card.example && <p class="card-copy card-example">{card.example}</p>}
+              {(card.sourceBy || card.sourceCite) && (
+                <div class="card-source">
+                  <p class="card-source-label">来源</p>
+                  {card.sourceBy && <p class="card-source-by">提出者：{card.sourceBy}</p>}
+                  {card.sourceCite && <p class="card-source-cite" set:html={cite(card.sourceCite)} />}
+                  {card.sourceAlt && <p class="card-source-alt" set:html={cite(card.sourceAlt)} />}
+                </div>
+              )}
               <button class="card-dialog-close" type="button" data-close>关闭</button>
             </dialog>
           ))}

@@ -440,6 +440,9 @@
         grid.appendChild(gridField('简介', item.intro ?? '', (v) => (item.intro = v), { textarea: true, rows: 2, wide: true }));
         grid.appendChild(gridField('详细定义', item.detail ?? '', (v) => (item.detail = v), { textarea: true, rows: 3, wide: true }));
         grid.appendChild(gridField('例子', item.example ?? '', (v) => (item.example = v), { textarea: true, rows: 2, wide: true }));
+        grid.appendChild(gridField('提出者', item.sourceBy ?? '', (v) => (item.sourceBy = v), { wide: true }));
+        grid.appendChild(gridField('来源文献（APA-7）', item.sourceCite ?? '', (v) => (item.sourceCite = v), { textarea: true, rows: 2, wide: true }));
+        grid.appendChild(gridField('延伸阅读（可选）', item.sourceAlt ?? '', (v) => (item.sourceAlt = v), { textarea: true, rows: 2, wide: true }));
         row.appendChild(grid);
         card.appendChild(row);
       });
@@ -612,7 +615,7 @@
     if (type === 'cards') block.items = [{ no: '01', title: '新条目', desc: '', status: '筹备中' }];
     if (type === 'timeline') block.items = [{ date: '', text: '' }];
     if (type === 'contact') { block.text = ''; block.email = state.site.email || ''; }
-    if (type === 'card-wall') block.items = [{ title: '', name: '', intro: '', detail: '', example: '' }];
+    if (type === 'card-wall') block.items = [{ title: '', name: '', intro: '', detail: '', example: '', sourceBy: '', sourceCite: '' }];
     page.blocks.push(block);
     renderBlocks(page);
     dirty = true;
