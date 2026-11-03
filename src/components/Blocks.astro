@@ -37,6 +37,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
                 <div>
                   <h3 class="item-title">
                     {item.href ? <a class="item-link" href={item.href}>{item.title}</a> : item.title}
+                    {item.href && <span class="item-arrow" aria-hidden="true">→</span>}
                     {item.sub && <span class="item-en">{item.sub}</span>}
                   </h3>
                   <p class="item-desc">{item.desc}</p>

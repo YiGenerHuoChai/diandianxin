@@ -247,6 +247,22 @@
     gap: 1rem;
   }
 
+  .item:has(.item-link) {
+    transition: transform 0.2s var(--ease-out);
+  }
+
+  .item:has(.item-link):hover {
+    transform: translateY(-2px);
+  }
+
+  .item:has(.item-link):hover .item-no {
+    color: var(--accent);
+  }
+
+  .item-arrow {
+    display: none;
+  }
+
   .item-no {
     padding-block-start: 0.3rem;
     font-size: 0.75rem;
@@ -339,15 +355,21 @@
     break-inside: avoid;
     margin-block-end: 1.25rem;
     padding: 1rem 1.1rem;
-    border: 1px solid var(--rule);
-    background: var(--paper);
+    border: 1px solid rgb(43 40 35 / 0.9);
+    background: rgb(43 40 35 / 0.88);
+    color: var(--paper);
+    -webkit-backdrop-filter: blur(10px) saturate(1.1);
+    backdrop-filter: blur(10px) saturate(1.1);
     cursor: pointer;
-    transition: border-color 0.2s var(--ease-out);
+    transition:
+      border-color 0.2s var(--ease-out),
+      transform 0.2s var(--ease-out);
   }
 
   .card:hover,
   .card:focus-visible {
     border-color: var(--accent);
+    transform: translateY(-2px);
     outline: none;
   }
 
@@ -356,19 +378,21 @@
     font-weight: 500;
     line-height: 1.5;
     letter-spacing: -0.01em;
+    color: var(--paper);
   }
 
   .card-name {
     margin-block-start: 0.3rem;
     font-size: 0.75rem;
     letter-spacing: 0.03em;
-    color: var(--muted);
+    color: rgb(250 248 244 / 0.65);
   }
 
   .card-intro {
     margin-block-start: 0.5rem;
     font-size: 0.875rem;
     line-height: 1.7;
+    color: rgb(250 248 244 / 0.82);
   }
 
   .card-copy {
@@ -588,6 +612,13 @@
 
     .card-grid {
       columns: 1;
+    }
+
+    .item-arrow {
+      display: inline;
+      margin-inline-start: 0.35em;
+      color: var(--accent);
+      font-weight: 400;
     }
 
     .shell-wide,
