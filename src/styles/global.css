@@ -107,10 +107,11 @@
 }
 
 @layer layout {
+  /* 三列：身份栏靠左，正文进中间列，右列留白——
+     内容在页面里居中，左右留白对称 */
   .shell {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: var(--gap);
+    grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure)) minmax(0, 1fr);
     max-inline-size: 90rem;
     padding-inline: var(--gutter);
     padding-block: var(--shell-top);
@@ -129,7 +130,6 @@
 
   .content {
     grid-column: 2;
-    max-inline-size: var(--measure);
     padding-block-end: 12rem;
   }
 }
@@ -196,11 +196,12 @@
     border-block-start: 1px solid var(--rule);
   }
 
+  /* 每部分标题：与小部分标题同级，不再做小号灰字 */
   .section-title {
-    font-size: 0.8125rem;
-    font-weight: 400;
-    letter-spacing: 0.18em;
-    color: var(--muted);
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
   }
 
   .items {
@@ -266,7 +267,7 @@
     font-size: 1.125rem;
   }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1000px) {
     .shell {
       grid-template-columns: 1fr;
       padding-inline: 1.5rem;
@@ -286,7 +287,6 @@
 
     .content {
       grid-column: 1;
-      max-inline-size: none;
       padding-block-end: 6rem;
     }
 
