@@ -292,7 +292,7 @@
       grid-row: auto;
       grid-column: 1;
       display: flex;
-      gap: 1.25rem;
+      gap: 1rem;
       padding-block: 1.25rem 0;
       border-block-end: 1px solid var(--rule);
     }
