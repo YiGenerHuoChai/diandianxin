@@ -1,0 +1,10 @@
+
+> diandianxin@0.1.0 dev
+> astro dev --host 127.0.0.1 --port 4321
+
+14:28:56 [vite] connected.
+14:28:56 [types] Generated 2ms
+14:28:56 [vite] connected.
+ astro  v7.4.5 ready in 493 ms
+┃ Local    http://127.0.0.1:4321/
+14:28:56 watching for file changes...

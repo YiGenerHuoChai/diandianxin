@@ -1,0 +1,123 @@
+---
+// 区块渲染器：页面里有什么，按 type 渲染什么。
+interface Props {
+  blocks: Array<Record<string, any>>;
+}
+
+const { blocks } = Astro.props;
+---
+
+{
+  blocks.map((block, i) => {
+    if (block.type === 'text') {
+      return (
+        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+          {block.items.map((p, j) => (j === 0 && block.lead ? <p class="lead">{p}</p> : <p class="copy">{p}</p>))}
+        </section>
+      );
+    }
+
+    if (block.type === 'cards') {
+      return (
+        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+          <ol class="items">
+            {block.items.map((item) => (
+              <li class="item">
+                <span class="item-no">{item.no}</span>
+                <div>
+                  <h3 class="item-title">
+                    {item.href ? <a class="item-link" href={item.href}>{item.title}</a> : item.title}
+                    {item.sub && <span class="item-en">{item.sub}</span>}
+                  </h3>
+                  <p class="item-desc">{item.desc}</p>
+                  {item.meta && <p class="item-meta">{item.meta}</p>}
+                  {item.status && <span class="status">{item.status}</span>}
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+      );
+    }
+
+    if (block.type === 'timeline') {
+      return (
+        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+          <ul class="timeline">
+            {block.items.map((item) => (
+              <li>
+                <time datetime={String(item.date).replaceAll('.', '-')}>{item.date}</time>
+                <span>{item.text}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    }
+
+    if (block.type === 'card-wall') {
+      return (
+        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+          <div class="card-grid">
+            {block.items.map((card, j) => (
+              <article class="card" tabindex="0" role="button" data-open={`card-dialog-${i}-${j}`}>
+                <h3 class="card-title">{card.title}</h3>
+                {card.name && <p class="card-name">{card.name}</p>}
+                {card.intro && <p class="card-intro">{card.intro}</p>}
+              </article>
+            ))}
+          </div>
+          {block.items.map((card, j) => (
+            <dialog class="card-dialog" id={`card-dialog-${i}-${j}`}>
+              <h3 class="card-title">{card.title}</h3>
+              {card.name && <p class="card-name">{card.name}</p>}
+              {card.intro && <p class="card-copy card-intro">{card.intro}</p>}
+              {card.detail && <p class="card-copy">{card.detail}</p>}
+              {card.example && <p class="card-copy card-example">{card.example}</p>}
+              <button class="card-dialog-close" type="button" data-close>关闭</button>
+            </dialog>
+          ))}
+        </section>
+      );
+    }
+
+    if (block.type === 'contact') {
+      return (
+        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+          {block.text && <p class="copy">{block.text}</p>}
+          {block.email && (
+            <p class="copy">
+              <a class="contact-link" href={`mailto:${block.email}`}>{block.email}</a>
+            </p>
+          )}
+        </section>
+      );
+    }
+
+    return null;
+  })
+}
+
+<script>
+  document.querySelectorAll('article[data-open]').forEach((card) => {
+    const open = () => {
+      const dialog = document.getElementById(card.getAttribute('data-open') || '');
+      if (dialog && !dialog.open) dialog.showModal();
+    };
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+
+  document.querySelectorAll('dialog.card-dialog').forEach((dialog) => {
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    const close = dialog.querySelector('[data-close]');
+    if (close) close.addEventListener('click', () => dialog.close());
+  });
+</script>

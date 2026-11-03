@@ -314,6 +314,87 @@
     font-size: 1.125rem;
   }
 
+  /* 卡片墙（瀑布流） */
+  .card-grid {
+    margin-block-start: 2rem;
+    columns: 1;
+    column-gap: 1.25rem;
+  }
+
+  .card {
+    break-inside: avoid;
+    margin-block-end: 1.25rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    cursor: pointer;
+    transition: border-color 0.2s var(--ease-out);
+  }
+
+  .card:hover,
+  .card:focus-visible {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: -0.01em;
+  }
+
+  .card-name {
+    margin-block-start: 0.3rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--muted);
+  }
+
+  .card-intro {
+    margin-block-start: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.7;
+  }
+
+  .card-copy {
+    margin-block-start: 1rem;
+    font-size: 0.9375rem;
+    line-height: 1.8;
+  }
+
+  .card-example {
+    padding-block-start: 0.75rem;
+    border-block-start: 1px solid var(--rule);
+    color: var(--muted);
+  }
+
+  /* 卡片弹窗 */
+  dialog.card-dialog {
+    max-inline-size: min(34rem, calc(100vw - 2 * var(--gutter)));
+    padding: 2rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  dialog.card-dialog::backdrop {
+    background: rgb(43 40 35 / 0.35);
+  }
+
+  .card-dialog-close {
+    margin-block-start: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: 0.875rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
   @media (max-width: 1100px) {
     .chapter-link {
       position: static;
@@ -356,6 +437,10 @@
 
     .section {
       margin-block-start: 3.5rem;
+    }
+
+    .card-grid {
+      columns: 1;
     }
   }
 }

@@ -1,286 +1,616 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>点心 · 本地编辑面板</title>
-  <style>
-    :root { --ink:#2b2823; --muted:#6b6459; --paper:#faf8f4; --rule:#e5dfd4; --accent:#b5482a; }
-    * { box-sizing:border-box; }
-    body { margin:0; font:14px/1.6 system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; background:#f3f0ea; color:var(--ink); }
-    header { position:sticky; top:0; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.75rem 1.25rem; background:#fff; border-bottom:1px solid var(--rule); }
-    header h1 { font-size:15px; margin:0; font-weight:600; }
-    header h1 span { color:var(--muted); font-weight:400; margin-left:.5em; font-size:12px; }
-    .actions { display:flex; align-items:center; gap:.75rem; }
-    #status { font-size:12px; color:var(--muted); }
-    #status.ok { color:#2f7d4f; }
-    #status.err { color:var(--accent); }
-    button { font:inherit; font-size:13px; padding:.35rem .9rem; border:1px solid var(--ink); background:#fff; color:var(--ink); border-radius:4px; cursor:pointer; }
-    button:hover { background:var(--ink); color:#fff; }
-    button.ghost { border-color:var(--rule); color:var(--muted); }
-    .layout { display:grid; grid-template-columns: minmax(340px, 440px) 1fr; height:calc(100vh - 59px); }
-    .form { overflow:auto; padding:1rem 1.25rem 3rem; border-right:1px solid var(--rule); background:#fff; }
-    fieldset { border:none; margin:0 0 1.5rem; padding:0; }
-    legend { font-size:12px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase; margin-bottom:.6rem; }
-    label { display:block; font-size:12px; color:var(--muted); margin:.6rem 0 .2rem; }
-    input, textarea { width:100%; font:inherit; font-size:13px; padding:.4rem .55rem; border:1px solid var(--rule); border-radius:4px; background:var(--paper); color:var(--ink); }
-    input:focus, textarea:focus { outline:2px solid var(--accent); outline-offset:0; border-color:transparent; }
-    textarea { resize:vertical; min-height:4.5em; }
-    .item-row { display:grid; grid-template-columns: 4.5rem 1fr; gap:.5rem; padding:.6rem; border:1px solid var(--rule); border-radius:6px; margin-bottom:.6rem; background:#fbfaf7; }
-    .now-row { display:grid; grid-template-columns: 6.5rem 1fr 2rem; gap:.4rem; margin-bottom:.4rem; align-items:start; }
-    .now-row button { padding:.2rem .4rem; font-size:12px; }
-    .scale-row { display:grid; grid-template-columns: 1fr 5rem; gap:.5rem; align-items:center; margin-top:.2rem; }
-    .scale-row input[type="range"] { padding:0; height:36px; }
-    .preview { background:#e9e5dd; padding:.75rem; }
-    iframe { width:100%; height:100%; border:0; background:var(--paper); border-radius:6px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
-    .hint { font-size:12px; color:var(--muted); margin:.4rem 0; }
-    .add { font-size:12px; padding:.25rem .7rem; margin-top:.3rem; }
-    @media (max-width: 900px) { .layout { grid-template-columns:1fr; height:auto; } .preview { height:70vh; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>点心 · 本地编辑面板</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    color: #2b2823;
+    background: #f3efe8;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 18px;
+    background: #fff;
+    border-bottom: 1px solid #e4ded2;
+  }
+  .topbar .title { font-weight: 600; font-size: 15px; }
+  .topbar .hint { margin-left: 10px; font-size: 12px; font-weight: 400; color: #8a8478; }
+  .top-actions { display: flex; align-items: center; gap: 10px; }
+
+  .page-tag {
+    font-size: 12px;
+    color: #6b6558;
+    background: #f2efe8;
+    border: 1px solid #e0d9cb;
+    border-radius: 999px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+  .page-tag.lab { color: #7a4a2b; background: #f7efe7; border-color: #e6d3c2; }
+
+  .save {
+    appearance: none;
+    border: 1px solid #2b2823;
+    background: #2b2823;
+    color: #fff;
+    border-radius: 6px;
+    padding: 7px 16px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .save:hover { background: #403b33; }
+  .save.ghost { background: #fff; color: #2b2823; border-color: #cfc7b8; }
+  .save.ghost:hover { background: #f2efe8; }
+
+  .status { font-size: 12px; color: #8a8478; min-width: 64px; }
+  .status.ok { color: #3d7a3d; }
+  .status.err { color: #a83232; }
+
+  .body { flex: 1; min-height: 0; display: flex; }
+
+  .panel {
+    flex: none;
+    width: 440px;
+    overflow-y: auto;
+    background: #fff;
+    border-right: 1px solid #e4ded2;
+    padding: 16px 20px 40px;
+  }
+
+  .group { margin-bottom: 22px; }
+  .group-title {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: #8a8478;
+    margin: 0 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #efe9dd;
+  }
+
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; color: #6b6558; margin-bottom: 4px; }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    font: inherit;
+    font-size: 13px;
+    color: #2b2823;
+    background: #fbf9f5;
+    border: 1px solid #ddd5c6;
+    border-radius: 5px;
+    padding: 6px 9px;
+  }
+  .field textarea { resize: vertical; min-height: 44px; line-height: 1.6; }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    outline: none;
+    border-color: #b5482a;
+    background: #fff;
+  }
+  .note { margin: 4px 0 0; font-size: 11px; color: #a39c8d; }
+
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  .slider-row input[type="range"] { flex: 1; accent-color: #b5482a; }
+  .slider-row .num { width: 64px; flex: none; }
+
+  .block-card {
+    border: 1px solid #e4ded2;
+    border-radius: 8px;
+    padding: 12px 12px 14px;
+    margin-bottom: 12px;
+    background: #fdfcf9;
+  }
+  .block-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .block-type {
+    font-size: 12px;
+    background: #f2efe8;
+    border: 1px solid #e0d9cb;
+    border-radius: 999px;
+    padding: 2px 9px;
+    color: #6b6558;
+  }
+  .block-actions { margin-left: auto; display: flex; gap: 4px; }
+
+  .mini {
+    appearance: none;
+    border: 1px solid #ddd5c6;
+    background: #fff;
+    color: #6b6558;
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 7px;
+    cursor: pointer;
+  }
+  .mini:hover { border-color: #b5482a; color: #b5482a; }
+
+  .item-card {
+    border: 1px dashed #e0d9cb;
+    border-radius: 6px;
+    padding: 8px 10px 10px;
+    margin-bottom: 10px;
+    background: #fbf9f5;
+  }
+  .item-card .item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: #a39c8d;
+  }
+  .item-grid { display: grid; grid-template-columns: 64px 1fr; gap: 6px 8px; }
+  .item-grid .field { margin: 0; }
+  .item-grid .grid-wide { grid-column: 1 / -1; }
+
+  .add-block {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .add-block select { flex: 1; }
+  .add-block button {
+    appearance: none;
+    border: 1px solid #b5482a;
+    background: #fff;
+    color: #b5482a;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .add-block button:hover { background: #b5482a; color: #fff; }
+
+  .preview { flex: 1; min-width: 0; background: #d8d4cc; }
+  .preview iframe { width: 100%; height: 100%; border: 0; background: #faf8f4; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>点心 · 本地编辑面板 <span>改完点保存 · 右边预览自动刷新</span></h1>
-    <div class="actions">
-      <button id="save">保存到文件</button>
-      <span id="status"></span>
-    </div>
-  </header>
-  <div class="layout">
-    <form class="form" id="form" onsubmit="return false"></form>
-    <div class="preview"><iframe id="preview" src="http://127.0.0.1:4321/" title="实时预览"></iframe></div>
+
+<header class="topbar">
+  <div class="title">点心 · 本地编辑面板 <span class="hint">改完点保存，右边预览自动刷新</span></div>
+  <div class="top-actions">
+    <span id="pageTag" class="page-tag">正在编辑：首页</span>
+    <button id="newPage" type="button" class="save ghost">＋ 新建页面</button>
+    <button id="save" type="button" class="save">保存到文件</button>
+    <span id="status" class="status"></span>
   </div>
+</header>
 
-  <script>
-    const $ = (sel) => document.querySelector(sel);
-    const esc = (s) =>
-      String(s ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+<div class="body">
+  <aside class="panel">
 
-    const form = $('#form');
-    const status = $('#status');
-    const preview = $('#preview');
+    <section class="group">
+      <div class="group-title">显示</div>
+      <div class="field">
+        <label>全站字号（百分比）</label>
+        <div class="slider-row">
+          <input type="range" id="fontScale" min="80" max="160" step="1">
+          <input type="number" id="fontScaleNum" min="80" max="160" step="1" class="num">
+        </div>
+        <p class="note">100 是原始大小；上限 160。110–120 大约相当于「大两号」</p>
+      </div>
+    </section>
 
-    let nowEntries = [];
+    <section class="group">
+      <div class="group-title">页面</div>
+      <div class="field"><label>页面标题</label><input id="pageTitle"></div>
+      <div class="field"><label>一句话简介</label><input id="pageTagline"></div>
+    </section>
 
-    const field = (label, id, value) =>
-      `<label for="${id}">${label}</label><input id="${id}" value="${esc(value)}">`;
+    <section class="group">
+      <div class="group-title">内容区块</div>
+      <div id="blocks"></div>
+      <div class="add-block">
+        <select id="newType">
+          <option value="text">文字段落</option>
+          <option value="cards">条目列表</option>
+          <option value="card-wall">卡片墙</option>
+          <option value="timeline">时间线</option>
+          <option value="contact">联系</option>
+        </select>
+        <button type="button" id="addBlock">＋ 添加区块</button>
+      </div>
+    </section>
 
-    const area = (label, id, value) =>
-      `<label for="${id}">${label}</label><textarea id="${id}">${esc(value)}</textarea>`;
+  </aside>
 
-    const group = (legend, inner) =>
-      `<fieldset><legend>${legend}</legend>${inner}</fieldset>`;
+  <div class="preview"><iframe id="preview" src="/" title="实时预览"></iframe></div>
+</div>
 
-    function render(data) {
-      nowEntries = (data.now || []).map((e) => ({ ...e }));
+<script>
+  const $ = (id) => document.getElementById(id);
+  const PREVIEW_BASE = ''; // 同源：面板和预览都在 4322，预览请求由 studio.mjs 代理到 Astro dev
 
-      form.innerHTML = [
-        group(
-          '显示',
-          `<label for="scale">全站字号（百分比）</label>
-           <div class="scale-row">
-             <input type="range" id="scaleRange" min="85" max="160" step="1" value="115">
-             <input type="number" id="scaleNum" min="85" max="160" step="1" value="115">
-           </div>
-           <p class="hint">100 是原始大小；上限 160。110–120 大约相当于「大两号」</p>`
-        ),
-        group(
-          '身份',
-          field('名字（空着不显示）', 'name', data.name) +
-            field('一句话简介', 'tagline', data.tagline) +
-            field('品牌名（顶部小字）', 'brand', data.brand) +
-            field('英文/域名（顶部小字）', 'brandEn', data.brandEn) +
-            field('联系邮箱', 'email', data.email)
-        ),
-        group(
-          '开场白',
-          (data.opening || []).map((p, i) => area(`第 ${i + 1} 段`, `opening${i}`, p)).join('')
-        ),
-        group(
-          '章节目录（右栏三个标题）',
-          field('这里亮着', 'chapterGrow', data.chapters?.grow) +
-            field('最近做的', 'chapterNow', data.chapters?.now) +
-            field('一起聊聊', 'chapterContact', data.chapters?.contact)
-        ),
-        group(
-          '这里亮着 · 四个分站',
-          (data.grow || [])
-            .map(
-              (item, i) => `
-              <div class="item-row">
-                <div>${field('编号', `grow${i}no`, item.no)}</div>
-                <div>
-                  ${field('标题', `grow${i}title`, item.title)}
-                  ${field('描述', `grow${i}desc`, item.desc)}
-                  ${field('链接（可选，如 /lab）', `grow${i}href`, item.href)}
-                  ${field('状态', `grow${i}status`, item.status)}
-                </div>
-              </div>`
-            )
-            .join('')
-        ),
-        group(
-          '最近做的 · 时间线',
-          `<div id="nowRows"></div><button type="button" class="ghost add" id="addNow">＋ 加一条</button>`
-        ),
-        group(
-          '一起聊聊',
-          area('一句话', 'contactText', data.contact?.text) +
-            field('显示邮箱', 'contactEmail', data.contact?.email)
-        ),
-      ].join('');
+  const state = { pages: {}, site: {}, theme: { scale: 1 }, file: 'home' };
+  let dirty = false;
 
-      renderNowRows();
+  const BLOCK_TYPES = { text: '文字段落', cards: '条目列表', 'card-wall': '卡片墙', timeline: '时间线', contact: '联系' };
 
-      $('#addNow').addEventListener('click', () => {
-        nowEntries.push({ date: '', text: '' });
-        renderNowRows();
-      });
+  const esc = (s) =>
+    String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-      const range = $('#scaleRange');
-      const num = $('#scaleNum');
-      range.addEventListener('input', () => {
-        num.value = range.value;
-      });
-      num.addEventListener('input', () => {
-        range.value = num.value;
-      });
+  const currentPage = () => state.pages[state.file];
+
+  function setStatus(text, kind) {
+    const node = $('status');
+    node.textContent = text;
+    node.className = 'status' + (kind ? ' ' + kind : '');
+  }
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function btn(label, onClick) {
+    const b = el('button', 'mini', label);
+    b.type = 'button';
+    b.addEventListener('click', (event) => {
+      event.preventDefault();
+      onClick();
+      dirty = true;
+    });
+    return b;
+  }
+
+  function field(label, value, onInput, opts = {}) {
+    const wrap = el('div', 'field');
+    wrap.appendChild(el('label', '', label));
+    const input = opts.textarea ? el('textarea') : el('input');
+    if (opts.textarea && opts.rows) input.rows = opts.rows;
+    input.value = value ?? '';
+    input.addEventListener('input', () => {
+      onInput(input.value);
+      dirty = true;
+    });
+    wrap.appendChild(input);
+    return wrap;
+  }
+
+  function gridField(label, value, onInput, opts = {}) {
+    const wrap = field(label, value, onInput, opts);
+    wrap.classList.add('grid-field');
+    if (opts.wide) wrap.classList.add('grid-wide');
+    return wrap;
+  }
+
+  // ── 渲染 ─────────────────────────────────────────────
+
+  function render() {
+    const page = currentPage();
+    if (!page) return;
+
+    const tag = $('pageTag');
+    tag.textContent = '正在编辑：' + (page.path === '/' ? '首页' : page.title) + '（' + page.path + '）';
+    tag.className = 'page-tag' + (page.path === '/' ? '' : ' lab');
+
+    $('pageTitle').value = page.title ?? '';
+    $('pageTagline').value = page.tagline ?? '';
+
+    renderBlocks(page);
+  }
+
+  function renderBlocks(page) {
+    const box = $('blocks');
+    box.innerHTML = '';
+    page.blocks.forEach((block, index) => {
+      box.appendChild(blockCard(page, block, index));
+    });
+  }
+
+  function blockCard(page, block, index) {
+    const card = el('div', 'block-card');
+
+    const head = el('div', 'block-head');
+    head.appendChild(el('span', 'block-type', BLOCK_TYPES[block.type] || block.type));
+
+    const actions = el('div', 'block-actions');
+    if (index > 0) actions.appendChild(btn('↑', () => moveBlock(page, index, -1)));
+    if (index < page.blocks.length - 1) actions.appendChild(btn('↓', () => moveBlock(page, index, 1)));
+    actions.appendChild(
+      btn('删除', () => {
+        if (!confirm('删除这个区块？')) return;
+        page.blocks.splice(index, 1);
+        renderBlocks(page);
+      }),
+    );
+    head.appendChild(actions);
+    card.appendChild(head);
+
+    if (block.type !== 'text') {
+      card.appendChild(field('标题（导航用）', block.nav ?? '', (v) => (block.nav = v)));
     }
 
-    function renderNowRows() {
-      const rows = $('#nowRows');
-      if (!rows) return;
-
-      rows.innerHTML =
-        nowEntries
-          .map(
-            (e, i) => `
-          <div class="now-row">
-            <input value="${esc(e.date)}" data-now="date" data-i="${i}" aria-label="日期" placeholder="2026.11.03">
-            <input value="${esc(e.text)}" data-now="text" data-i="${i}" aria-label="内容">
-            <button type="button" class="ghost" data-del="${i}" aria-label="删除">×</button>
-          </div>`
-          )
-          .join('') || '<p class="hint">还没有条目</p>';
-
-      rows.querySelectorAll('[data-now]').forEach((el) => {
-        el.addEventListener('input', () => {
-          nowEntries[Number(el.dataset.i)][el.dataset.now] = el.value;
-        });
+    if (block.type === 'text') {
+      block.items = block.items || [];
+      block.items.forEach((text, i) => {
+        const row = el('div', 'item-card');
+        const rowHead = el('div', 'item-head');
+        rowHead.appendChild(el('span', '', i === 0 && block.lead ? '第 ' + (i + 1) + ' 段（导语，字号大）' : '第 ' + (i + 1) + ' 段'));
+        rowHead.appendChild(btn('删除这段', () => { block.items.splice(i, 1); renderBlocks(page); }));
+        row.appendChild(rowHead);
+        row.appendChild(field('内容', text, (v) => (block.items[i] = v), { textarea: true, rows: 2 }));
+        card.appendChild(row);
       });
-
-      rows.querySelectorAll('[data-del]').forEach((el) => {
-        el.addEventListener('click', () => {
-          nowEntries.splice(Number(el.dataset.del), 1);
-          renderNowRows();
-        });
-      });
+      card.appendChild(
+        btn('＋ 加一段', () => {
+          block.items.push('');
+          renderBlocks(page);
+        }),
+      );
     }
 
-    function collect() {
-      const opening = [];
-      for (let i = 0; i < 12; i++) {
-        const el = $(`#opening${i}`);
-        if (!el) break;
-        opening.push(el.value.trim());
+    if (block.type === 'cards') {
+      block.items = block.items || [];
+      block.items.forEach((item, i) => {
+        const row = el('div', 'item-card');
+        const rowHead = el('div', 'item-head');
+        rowHead.appendChild(el('span', '', '条目 ' + (i + 1)));
+        rowHead.appendChild(btn('删除', () => { block.items.splice(i, 1); renderBlocks(page); }));
+        row.appendChild(rowHead);
+
+        const grid = el('div', 'item-grid');
+        grid.appendChild(gridField('编号', item.no ?? '', (v) => (item.no = v)));
+        grid.appendChild(gridField('标题', item.title ?? '', (v) => (item.title = v)));
+        grid.appendChild(gridField('小字', item.sub ?? '', (v) => (item.sub = v)));
+        grid.appendChild(gridField('描述', item.desc ?? '', (v) => (item.desc = v), { textarea: true, rows: 2 }));
+        grid.appendChild(gridField('状态', item.status ?? '', (v) => (item.status = v)));
+        grid.appendChild(gridField('附注', item.meta ?? '', (v) => (item.meta = v)));
+        grid.appendChild(
+          gridField('链接', item.href ?? '', (v) => {
+            if (v.trim()) item.href = v.trim();
+            else delete item.href;
+          }, { wide: true }),
+        );
+        row.appendChild(grid);
+        card.appendChild(row);
+      });
+      card.appendChild(
+        btn('＋ 加一条', () => {
+          block.items.push({ no: '', title: '' });
+          renderBlocks(page);
+        }),
+      );
+    }
+
+    if (block.type === 'timeline') {
+      block.items = block.items || [];
+      block.items.forEach((item, i) => {
+        const row = el('div', 'item-card');
+        const rowHead = el('div', 'item-head');
+        rowHead.appendChild(el('span', '', '记录 ' + (i + 1)));
+        rowHead.appendChild(btn('删除', () => { block.items.splice(i, 1); renderBlocks(page); }));
+        row.appendChild(rowHead);
+
+        const grid = el('div', 'item-grid');
+        grid.appendChild(gridField('日期', item.date ?? '', (v) => (item.date = v)));
+        grid.appendChild(gridField('内容', item.text ?? '', (v) => (item.text = v), { textarea: true, rows: 2 }));
+        row.appendChild(grid);
+        card.appendChild(row);
+      });
+      card.appendChild(
+        btn('＋ 加一条', () => {
+          block.items.push({ date: '', text: '' });
+          renderBlocks(page);
+        }),
+      );
+    }
+
+    if (block.type === 'contact') {
+      card.appendChild(field('正文', block.text ?? '', (v) => (block.text = v), { textarea: true, rows: 2 }));
+      card.appendChild(field('邮箱', block.email ?? '', (v) => (block.email = v)));
+    }
+
+    if (block.type === 'card-wall') {
+      block.items = block.items || [];
+      block.items.forEach((item, i) => {
+        const row = el('div', 'item-card');
+        const rowHead = el('div', 'item-head');
+        rowHead.appendChild(el('span', '', '卡片 ' + (i + 1)));
+        rowHead.appendChild(btn('删除', () => { block.items.splice(i, 1); renderBlocks(page); }));
+        row.appendChild(rowHead);
+
+        const grid = el('div', 'item-grid');
+        grid.appendChild(gridField('标题', item.title ?? '', (v) => (item.title = v), { wide: true }));
+        grid.appendChild(gridField('名称', item.name ?? '', (v) => (item.name = v), { wide: true }));
+        grid.appendChild(gridField('简介', item.intro ?? '', (v) => (item.intro = v), { textarea: true, rows: 2, wide: true }));
+        grid.appendChild(gridField('详细定义', item.detail ?? '', (v) => (item.detail = v), { textarea: true, rows: 3, wide: true }));
+        grid.appendChild(gridField('例子', item.example ?? '', (v) => (item.example = v), { textarea: true, rows: 2, wide: true }));
+        row.appendChild(grid);
+        card.appendChild(row);
+      });
+      card.appendChild(
+        btn('＋ 加一张卡', () => {
+          block.items.push({ title: '', name: '', intro: '', detail: '', example: '' });
+          renderBlocks(page);
+        }),
+      );
+    }
+
+    return card;
+  }
+
+  function moveBlock(page, index, delta) {
+    const target = index + delta;
+    if (target < 0 || target >= page.blocks.length) return;
+    const [moved] = page.blocks.splice(index, 1);
+    page.blocks.splice(target, 0, moved);
+    renderBlocks(page);
+  }
+
+  // ── 数据读写 ─────────────────────────────────────────
+
+  async function load() {
+    try {
+      const res = await fetch('/api/all');
+      const data = await res.json();
+      state.pages = data.pages;
+      state.site = data.site;
+      state.theme = data.theme;
+
+      const scale = Math.round((Number(state.theme.scale) || 1) * 100);
+      $('fontScale').value = scale;
+      $('fontScaleNum').value = scale;
+
+      const hasHome = Boolean(state.pages.home);
+      state.file = hasHome ? 'home' : Object.keys(state.pages)[0] || 'home';
+      render();
+    } catch (err) {
+      setStatus('读取失败：' + err, 'err');
+    }
+  }
+
+  async function save() {
+    const page = currentPage();
+    if (!page) return;
+    setStatus('保存中…');
+    try {
+      const [r1, r2, r3] = await Promise.all([
+        fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: state.file, page }),
+        }),
+        fetch('/api/site', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state.site),
+        }),
+        fetch('/api/theme', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(state.theme),
+        }),
+      ]);
+
+      if (!r1.ok) throw new Error('页面保存失败：' + (await r1.text()));
+      if (!r2.ok) throw new Error('站点信息保存失败：' + (await r2.text()));
+      if (!r3.ok) throw new Error('字号保存失败：' + (await r3.text()));
+
+      dirty = false;
+      setStatus('已保存 ✓', 'ok');
+      refreshPreview();
+    } catch (err) {
+      setStatus('保存失败：' + err.message, 'err');
+    }
+  }
+
+  function refreshPreview() {
+    const page = currentPage();
+    const path = page?.path || '/';
+    $('preview').src = PREVIEW_BASE + path + '?t=' + Date.now();
+  }
+
+  // ── 预览页切换（同源，直接读 iframe 地址）──────────────
+
+  const fileFromPath = (path) => (path === '/' ? 'home' : path.replace(/^\//, '').replace(/\/.*$/, ''));
+
+  function syncFromPreview() {
+    let path = '/';
+    try {
+      path = $('preview').contentWindow.location.pathname || '/';
+    } catch {
+      return;
+    }
+    const file = fileFromPath(path);
+    if (state.pages[file] && file !== state.file) {
+      state.file = file;
+      render();
+    }
+  }
+
+  $('preview').addEventListener('load', syncFromPreview);
+  setInterval(syncFromPreview, 700);
+
+  // ── 事件绑定 ─────────────────────────────────────────
+
+  $('save').addEventListener('click', save);
+
+  $('newPage').addEventListener('click', async () => {
+    const file = (prompt('新页面的地址名（英文小写，如 notes）：') || '').trim().toLowerCase();
+    if (!file) return;
+    try {
+      const res = await fetch('/api/new', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file }),
+      });
+      if (!res.ok) {
+        setStatus('新建失败：' + (await res.text()), 'err');
+        return;
       }
-
-      const grow = [];
-      for (let i = 0; i < 12; i++) {
-        const title = $(`#grow${i}title`);
-        if (!title) break;
-        const href = $(`#grow${i}href`).value.trim();
-        const item = {
-          no: $(`#grow${i}no`).value.trim(),
-          title: title.value.trim(),
-          desc: $(`#grow${i}desc`).value.trim(),
-          status: $(`#grow${i}status`).value.trim(),
-        };
-        if (href) item.href = href;
-        grow.push(item);
-      }
-
-      return {
-        brand: $('#brand').value.trim(),
-        brandEn: $('#brandEn').value.trim(),
-        name: $('#name').value.trim(),
-        tagline: $('#tagline').value.trim(),
-        email: $('#email').value.trim(),
-        opening: opening.filter(Boolean),
-        chapters: {
-          grow: $('#chapterGrow').value.trim(),
-          now: $('#chapterNow').value.trim(),
-          contact: $('#chapterContact').value.trim(),
-        },
-        grow,
-        now: nowEntries.map((e) => ({ date: e.date.trim(), text: e.text.trim() })).filter((e) => e.text),
-        contact: {
-          text: $('#contactText').value.trim(),
-          email: $('#contactEmail').value.trim(),
-        },
-      };
+      const data = await res.json();
+      state.pages[data.file] = data.page;
+      state.file = data.file;
+      render();
+      setStatus('已新建 /' + data.file + '，加内容后点保存', 'ok');
+    } catch (err) {
+      setStatus('新建失败：' + err.message, 'err');
     }
+  });
 
-    function applyTheme(theme) {
-      const pct = Math.round(Number(theme?.scale ?? 1.15) * 100);
-      const range = $('#scaleRange');
-      const num = $('#scaleNum');
-      if (range) range.value = pct;
-      if (num) num.value = pct;
-    }
+  $('fontScale').addEventListener('input', (event) => {
+    const value = Number(event.target.value);
+    $('fontScaleNum').value = value;
+    state.theme.scale = value / 100;
+    dirty = true;
+  });
+  $('fontScaleNum').addEventListener('input', (event) => {
+    const value = Math.max(80, Math.min(160, Number(event.target.value) || 100));
+    $('fontScale').value = value;
+    state.theme.scale = value / 100;
+    dirty = true;
+  });
 
-    async function load() {
-      try {
-        const [contentRes, themeRes] = await Promise.all([
-          fetch('/api/content'),
-          fetch('/api/theme'),
-        ]);
-        if (!contentRes.ok || !themeRes.ok) throw new Error('读取失败');
-        render(await contentRes.json());
-        applyTheme(await themeRes.json());
-      } catch (err) {
-        status.textContent = '读取失败：' + err.message;
-        status.className = 'err';
-      }
-    }
+  $('pageTitle').addEventListener('input', (event) => {
+    const page = currentPage();
+    if (page) page.title = event.target.value;
+    dirty = true;
+  });
+  $('pageTagline').addEventListener('input', (event) => {
+    const page = currentPage();
+    if (page) page.tagline = event.target.value;
+    dirty = true;
+  });
 
-    async function save() {
-      status.textContent = '保存中…';
-      status.className = '';
-      try {
-        const scale = Number($('#scaleNum').value) / 100;
-        const [r1, r2] = await Promise.all([
-          fetch('/api/content', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(collect()),
-          }),
-          fetch('/api/theme', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ scale }),
-          }),
-        ]);
-        if (!r1.ok) throw new Error('内容保存失败：' + (await r1.text()));
-        if (!r2.ok) throw new Error('字号保存失败：' + (await r2.text()));
-        status.textContent = '已保存 ✓';
-        status.className = 'ok';
-        setTimeout(() => {
-          status.textContent = '';
-        }, 2500);
-        preview.src = preview.src.split('?')[0] + '?t=' + Date.now();
-      } catch (err) {
-        status.textContent = '保存失败：' + err.message;
-        status.className = 'err';
-      }
-    }
+  $('addBlock').addEventListener('click', () => {
+    const page = currentPage();
+    if (!page) return;
+    const type = $('newType').value;
+    const block = { type };
+    if (type !== 'text') block.nav = '';
+    if (type === 'text') block.items = ['新段落'];
+    if (type === 'cards') block.items = [{ no: '01', title: '新条目', desc: '', status: '筹备中' }];
+    if (type === 'timeline') block.items = [{ date: '', text: '' }];
+    if (type === 'contact') { block.text = ''; block.email = state.site.email || ''; }
+    if (type === 'card-wall') block.items = [{ title: '', name: '', intro: '', detail: '', example: '' }];
+    page.blocks.push(block);
+    renderBlocks(page);
+    dirty = true;
+  });
 
-    $('#save').addEventListener('click', save);
-    load();
-  </script>
+  load();
+</script>
+
 </body>
 </html>

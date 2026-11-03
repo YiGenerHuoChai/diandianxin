@@ -1,0 +1,17 @@
+---
+import Page from '../components/Page.astro';
+
+export function getStaticPaths() {
+  const files = import.meta.glob('/src/content/pages/*.json', { eager: true });
+  return Object.entries(files)
+    .filter(([path]) => !path.endsWith('/home.json'))
+    .map(([path, mod]) => {
+      const slug = path.split('/').pop()!.replace('.json', '');
+      return { params: { slug }, props: { page: (mod as any).default } };
+    });
+}
+
+const { page } = Astro.props;
+---
+
+<Page page={page} />
