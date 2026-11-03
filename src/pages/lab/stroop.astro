@@ -6,61 +6,82 @@ import Layout from '../../layouts/Layout.astro';
   title="Stroop 色词 · 点心"
   description="点心 · 可交互实验：Stroop 色词，1 分钟测测你的抑制控制。"
 >
-  <div class="shell shell-wide">
-    <header class="intro">
+  <div class="stroop-page">
+    <header class="stroop-top">
       <p class="brand">点心 <span class="brand-en">diandianxin.cn</span></p>
-      <h1 class="name">Stroop 色词</h1>
-      <p class="tagline">字说的和颜色说的，你听谁的？</p>
-      <footer class="intro-foot"><a href="/lab/">← 回实验目录</a></footer>
     </header>
 
-    <main class="content stroop">
-      <section id="stage-start" class="stroop-panel">
-        <p class="lead">屏幕中间会出现一个表示颜色的字，但字可能是用另一种颜色写的。</p>
-        <p class="copy">你要做的：忽略字的意思，只报告「字是什么颜色」。</p>
-        <p class="copy">一共 20 题，大概 1 分钟。</p>
-        <button class="stroop-btn stroop-start" data-start>开始</button>
-      </section>
+    <main class="stroop-main">
+      <div class="stroop-inner">
+        <h1 class="stroop-title">Stroop 色词</h1>
 
-      <section id="stage-run" class="stroop-panel" hidden>
-        <p class="stroop-progress"><span data-progress>1</span> / 20</p>
-        <div id="stroop-word" class="stroop-word">红</div>
-        <div class="stroop-options">
-          <button class="stroop-btn" data-color="red">红</button>
-          <button class="stroop-btn" data-color="green">绿</button>
-          <button class="stroop-btn" data-color="blue">蓝</button>
-          <button class="stroop-btn" data-color="yellow">黄</button>
-        </div>
-        <p class="stroop-hint">也可以按键盘 1 / 2 / 3 / 4</p>
-      </section>
+        <section id="stage-start" class="stroop-panel">
+          <p class="lead">你会看到一些用彩色墨水印的颜色词。请尽可能快而准确地报告墨水的颜色，而不是词的意思。</p>
+          <p class="copy stroop-meta">一共 20 题，大概 1 分钟。</p>
+          <button class="stroop-btn stroop-start" data-start>开始</button>
+        </section>
 
-      <section id="stage-done" class="stroop-panel" hidden>
-        <p class="lead">这一轮结束了。</p>
-        <div class="stroop-result">
-          <p class="stroop-row">字和颜色一致：<strong data-rt-c>—</strong> 毫秒</p>
-          <p class="stroop-row">字和颜色不一致：<strong data-rt-i>—</strong> 毫秒</p>
-        </div>
-        <p class="copy stroop-diff" data-diff></p>
-        <p class="copy" data-explain></p>
-        <p class="copy stroop-acc" data-acc></p>
-        <button class="stroop-btn stroop-start" data-restart>再来一次</button>
-      </section>
+        <section id="stage-run" class="stroop-panel" hidden>
+          <p class="stroop-progress"><span data-progress>1</span> / 20</p>
+          <div id="stroop-word" class="stroop-word">红</div>
+          <div class="stroop-options">
+            <button class="stroop-btn" data-color="red">红</button>
+            <button class="stroop-btn" data-color="green">绿</button>
+            <button class="stroop-btn" data-color="blue">蓝</button>
+            <button class="stroop-btn" data-color="yellow">黄</button>
+          </div>
+          <p class="stroop-hint">也可以按键盘 1 / 2 / 3 / 4</p>
+        </section>
+
+        <section id="stage-done" class="stroop-panel" hidden>
+          <p class="lead">这一轮结束了。</p>
+          <div class="stroop-result">
+            <p class="stroop-row">字和颜色一致：<strong data-rt-c>—</strong> 毫秒</p>
+            <p class="stroop-row">字和颜色不一致：<strong data-rt-i>—</strong> 毫秒</p>
+          </div>
+          <p class="copy stroop-diff" data-diff></p>
+          <p class="copy" data-explain></p>
+          <p class="copy stroop-acc" data-acc></p>
+          <button class="stroop-btn stroop-start" data-restart>再来一次</button>
+        </section>
+      </div>
     </main>
+
+    <footer class="stroop-bottom">
+      <a href="/lab/">← 回实验目录</a>
+    </footer>
   </div>
 </Layout>
 
 <style>
-  .stroop {
+  .stroop-page {
+    min-block-size: 100svh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding-block: 2.5rem;
+    padding-inline: var(--gutter);
+  }
+
+  .stroop-main {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-block-size: 72svh;
-    padding-block-end: 0;
+    min-block-size: 0;
+  }
+
+  .stroop-inner {
+    margin: auto;
+    inline-size: 100%;
+    max-inline-size: 42rem;
+    text-align: center;
+  }
+
+  .stroop-title {
+    margin-block-end: 3rem;
+    font-size: 1.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
   }
 
   .stroop-panel {
-    max-inline-size: 40rem;
-    margin-inline: auto;
     text-align: center;
   }
 
@@ -68,6 +89,11 @@ import Layout from '../../layouts/Layout.astro';
     font-size: 0.8125rem;
     letter-spacing: 0.12em;
     color: var(--muted);
+  }
+
+  .stroop-meta {
+    color: var(--muted);
+    font-size: 0.9375rem;
   }
 
   .stroop-word {
