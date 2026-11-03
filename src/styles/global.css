@@ -185,6 +185,9 @@
   .chapter-link {
     position: absolute;
     left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: 600;
     font-size: 0.9375rem;
     line-height: 1.5;
     transition: top 0.5s var(--ease-out);
