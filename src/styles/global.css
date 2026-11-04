@@ -255,6 +255,26 @@
     pointer-events: auto;
   }
 
+  /* 滚动分屏的右栏标题：垂直居中，只显示当前屏对应的那一块 */
+  /* 注意：.chapters 是 <main class="content-scroll"> 的兄弟节点，不是后代，选择器必须从 .shell 上找 */
+  .shell:has(.content-scroll) .chapters {
+    position: static;
+    display: grid;
+    align-content: center;
+    min-block-size: auto;
+  }
+
+  .shell:has(.content-scroll) .chapter-link {
+    position: static;
+    grid-area: 1 / 1;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease-out);
+  }
+
+  .shell:has(.content-scroll) .chapter-link.is-current {
+    opacity: 1;
+  }
+
   /* 每部分标题：与小部分标题同级，不再做小号灰字 */
   .section-title {
     font-size: 1.125rem;

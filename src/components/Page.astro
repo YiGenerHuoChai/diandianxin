@@ -23,12 +23,12 @@ const brandSuffix = page.path === '/' ? '' : ` · ${home.title}`;
 const pageTitle = [site.brand, page.title].filter(Boolean).join(' · ') + brandSuffix;
 const description = page.description ?? page.tagline ?? '';
 
-const navItems = (page.blocks || [])
-  .map((block, i) => ({ index: i, label: block.nav }))
-  .filter((item) => item.label);
-
 // 首页滚动分屏：介绍 / 这里亮着 / 最近做的 + 和我聊聊
 const screenMap = page.scroll ? [0, 1, 2, 3] : undefined;
+
+const navItems = (page.blocks || [])
+  .map((block, i) => ({ index: i, label: block.nav, screen: screenMap?.[i] }))
+  .filter((item) => item.label);
 ---
 
 <Layout title={pageTitle} description={description}>
@@ -49,13 +49,11 @@ const screenMap = page.scroll ? [0, 1, 2, 3] : undefined;
       </footer>
     </header>
 
-    {!page.scroll && (
-      <nav class="chapters" aria-label="页面导航">
-        {navItems.map((item) => (
-          <a class="chapter-link" href={`#block-${item.index}`}>{item.label}</a>
-        ))}
-      </nav>
-    )}
+    <nav class="chapters" aria-label="页面导航">
+      {navItems.map((item) => (
+        <a class="chapter-link" href={`#block-${item.index}`} data-screen={item.screen}>{item.label}</a>
+      ))}
+    </nav>
 
     <main class={page.scroll ? 'content content-scroll' : 'content'}>
       <Blocks blocks={page.blocks} screenMap={screenMap} />
@@ -71,10 +69,19 @@ const screenMap = page.scroll ? [0, 1, 2, 3] : undefined;
     let current = 0;
     let locked = false;
 
+    const chapters = [...document.querySelectorAll('.chapter-link')];
+
+    const paintChapters = () => {
+      chapters.forEach((a) => {
+        a.classList.toggle('is-current', Number(a.dataset.screen) === screens[current]);
+      });
+    };
+
     const apply = () => {
       sections.forEach((s) => {
         s.classList.toggle('is-active', Number(s.dataset.screen) === screens[current]);
       });
+      paintChapters();
     };
 
     const go = (next) => {
