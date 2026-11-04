@@ -244,7 +244,7 @@
     border: 0;
     display: grid;
     align-content: center;
-    overflow-y: auto;
+    overflow: hidden;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s var(--ease-out);
@@ -253,6 +253,25 @@
   .content-scroll .section.is-active {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  /* 滚动分屏的内容收紧一点：一屏放得下，不出滚动条 */
+  .content-scroll .items {
+    margin-block-start: 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .content-scroll .item-no {
+    font-size: 0.6875rem;
+  }
+
+  .content-scroll .item-title {
+    font-size: 1rem;
+  }
+
+  .content-scroll .item-desc {
+    margin-block-start: 0.35rem;
+    font-size: 0.875rem;
   }
 
   /* 滚动分屏的右栏标题：垂直居中，只显示当前屏对应的那一块 */
