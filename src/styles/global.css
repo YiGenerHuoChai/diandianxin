@@ -230,6 +230,8 @@
   /* 首页滚动分屏 */
   .content-scroll {
     block-size: 100svh;
+    /* grid item 默认 shrink-to-fit；内容全是 absolute 时宽度会塌成 0，必须显式占满 */
+    inline-size: 100%;
     position: relative;
     overflow: hidden;
   }
@@ -237,12 +239,12 @@
   .content-scroll .section {
     position: absolute;
     inset: 0;
-    margin-block-start: 0;
-    padding-block-start: 0;
-    border-block-start: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: grid;
+    align-content: center;
+    overflow-y: auto;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.5s var(--ease-out);
