@@ -1,6 +1,7 @@
 {
   "path": "/",
   "title": "点心",
+  "scroll": true,
   "tagline": "吃块点心，点亮你的心",
   "description": "点心：用吃块点心的时间，了解一点心理学。",
   "back": false,

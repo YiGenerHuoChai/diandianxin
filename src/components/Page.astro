@@ -12,6 +12,7 @@ interface Props {
     description?: string;
     back?: boolean;
     wide?: boolean;
+    scroll?: boolean;
     blocks: Array<Record<string, any>>;
   };
 }
@@ -25,6 +26,9 @@ const description = page.description ?? page.tagline ?? '';
 const navItems = (page.blocks || [])
   .map((block, i) => ({ index: i, label: block.nav }))
   .filter((item) => item.label);
+
+// 首页滚动分屏：介绍 / 这里亮着 / 最近做的 + 和我聊聊
+const screenMap = page.scroll ? [0, 1, 2, 2] : undefined;
 ---
 
 <Layout title={pageTitle} description={description}>
@@ -45,14 +49,65 @@ const navItems = (page.blocks || [])
       </footer>
     </header>
 
-    <nav class="chapters" aria-label="页面导航">
-      {navItems.map((item) => (
-        <a class="chapter-link" href={`#block-${item.index}`}>{item.label}</a>
-      ))}
-    </nav>
+    {!page.scroll && (
+      <nav class="chapters" aria-label="页面导航">
+        {navItems.map((item) => (
+          <a class="chapter-link" href={`#block-${item.index}`}>{item.label}</a>
+        ))}
+      </nav>
+    )}
 
-    <main class="content">
-      <Blocks blocks={page.blocks} />
+    <main class={page.scroll ? 'content content-scroll' : 'content'}>
+      <Blocks blocks={page.blocks} screenMap={screenMap} />
     </main>
   </div>
 </Layout>
+
+<script>
+  const root = document.querySelector('.content-scroll');
+  if (root) {
+    const sections = [...root.querySelectorAll('.section')];
+    const screens = [...new Set(sections.map((s) => Number(s.dataset.screen)))].sort((a, b) => a - b);
+    let current = 0;
+    let locked = false;
+
+    const apply = () => {
+      sections.forEach((s) => {
+        s.classList.toggle('is-active', Number(s.dataset.screen) === screens[current]);
+      });
+    };
+
+    const go = (next) => {
+      if (next < 0 || next >= screens.length || next === current) return;
+      current = next;
+      locked = true;
+      apply();
+      window.setTimeout(() => {
+        locked = false;
+      }, 650);
+    };
+
+    apply();
+
+    window.addEventListener(
+      'wheel',
+      (event) => {
+        if (locked) return;
+        if (Math.abs(event.deltaY) < 8) return;
+        go(current + (event.deltaY > 0 ? 1 : -1));
+        event.preventDefault();
+      },
+      { passive: false }
+    );
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'PageDown' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        go(current + 1);
+      } else if (event.key === 'PageUp' || event.key === 'ArrowUp') {
+        event.preventDefault();
+        go(current - 1);
+      }
+    });
+  }
+</script>

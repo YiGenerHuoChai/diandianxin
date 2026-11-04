@@ -2,9 +2,11 @@
 // 区块渲染器：页面里有什么，按 type 渲染什么。
 interface Props {
   blocks: Array<Record<string, any>>;
+  /** 可选：每个区块归到哪一屏（滚动分屏模式用） */
+  screenMap?: number[];
 }
 
-const { blocks } = Astro.props;
+const { blocks, screenMap } = Astro.props;
 
 // 引用里的 *斜体* 转成 <em>（APA-7 的期刊名/书名用斜体）
 const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
@@ -14,7 +16,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
   blocks.map((block, i) => {
     if (block.type === 'text') {
       return (
-        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+        <section id={`block-${i}`} class="section" data-nav={block.nav} data-screen={screenMap?.[i]}>
           {block.items.flatMap((p, j) =>
             String(p)
               .split(/\r?\n/)
@@ -29,7 +31,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
     if (block.type === 'cards') {
       return (
-        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+        <section id={`block-${i}`} class="section" data-nav={block.nav} data-screen={screenMap?.[i]}>
           <ol class="items">
             {block.items.map((item) => (
               <li class="item">
@@ -53,7 +55,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
     if (block.type === 'timeline') {
       return (
-        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+        <section id={`block-${i}`} class="section" data-nav={block.nav} data-screen={screenMap?.[i]}>
           <ul class="timeline">
             {block.items.map((item) => (
               <li>
@@ -68,7 +70,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
     if (block.type === 'card-wall') {
       return (
-        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+        <section id={`block-${i}`} class="section" data-nav={block.nav} data-screen={screenMap?.[i]}>
           <div class="card-grid">
             {block.items.map((card, j) => (
               <article class="card" tabindex="0" role="button" data-open={`card-dialog-${i}-${j}`}>
@@ -102,7 +104,7 @@ const cite = (s: string) => String(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
     if (block.type === 'contact') {
       return (
-        <section id={`block-${i}`} class="section" data-nav={block.nav}>
+        <section id={`block-${i}`} class="section" data-nav={block.nav} data-screen={screenMap?.[i]}>
           {block.text && <p class="copy">{block.text}</p>}
           {block.email && (
             <p class="copy">

@@ -206,6 +206,7 @@
     font-weight: 600;
     font-size: 0.9375rem;
     line-height: 1.5;
+    text-decoration: none;
     transition: top 0.5s var(--ease-out);
   }
 
@@ -224,6 +225,32 @@
     margin-block-start: 5rem;
     padding-block-start: 2rem;
     border-block-start: 1px solid var(--rule);
+  }
+
+  /* 首页滚动分屏 */
+  .content-scroll {
+    block-size: 100svh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .content-scroll .section {
+    position: absolute;
+    inset: 0;
+    margin-block-start: 0;
+    padding-block-start: 0;
+    border-block-start: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease-out);
+  }
+
+  .content-scroll .section.is-active {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   /* 每部分标题：与小部分标题同级，不再做小号灰字 */
@@ -291,7 +318,7 @@
 
   .item-link .item-title {
     display: inline-block;
-    border-block-end: 1px solid transparent;
+    border-block-end: 1px solid var(--accent);
     transition: border-color 0.2s var(--ease-out);
   }
 
@@ -355,11 +382,8 @@
     break-inside: avoid;
     margin-block-end: 1.25rem;
     padding: 1rem 1.1rem;
-    border: 1px solid rgb(43 40 35 / 0.9);
-    background: rgb(43 40 35 / 0.88);
-    color: var(--paper);
-    -webkit-backdrop-filter: blur(10px) saturate(1.1);
-    backdrop-filter: blur(10px) saturate(1.1);
+    border: 1px solid var(--rule);
+    background: var(--paper);
     cursor: pointer;
     transition:
       border-color 0.2s var(--ease-out),
@@ -378,21 +402,19 @@
     font-weight: 500;
     line-height: 1.5;
     letter-spacing: -0.01em;
-    color: var(--paper);
   }
 
   .card-name {
     margin-block-start: 0.3rem;
     font-size: 0.75rem;
     letter-spacing: 0.03em;
-    color: rgb(250 248 244 / 0.65);
+    color: var(--muted);
   }
 
   .card-intro {
     margin-block-start: 0.5rem;
     font-size: 0.875rem;
     line-height: 1.7;
-    color: rgb(250 248 244 / 0.82);
   }
 
   .card-copy {
@@ -612,6 +634,21 @@
 
     .card-grid {
       columns: 1;
+    }
+
+    .content-scroll {
+      block-size: auto;
+      position: static;
+      overflow: visible;
+    }
+
+    .content-scroll .section {
+      position: static;
+      opacity: 1;
+      pointer-events: auto;
+      margin-block-start: 3.5rem;
+      padding-block-start: 2rem;
+      border-block-start: 1px solid var(--rule);
     }
 
     .item-arrow {
